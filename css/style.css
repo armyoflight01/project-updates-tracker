@@ -1,11 +1,13 @@
 /* ==========================================================================
    Franchise Ready (فرنشايز ريدي السعودية) - Executive Tracker Stylesheet
    Corporate Identity: Royal Blue (#3654a4), Deep Navy (#1a326b) & Scarlet Red (#ec173a)
-   Responsive (Mobile, Tablet, Desktop) & Print/PDF Optimized
+   Bilingual Support (English & Arabic RTL / LTR), Fully Responsive (Mobile, Tablet, Desktop)
    ========================================================================== */
 
 :root {
-  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-en: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-ar: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-primary: var(--font-en);
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Franchise Ready Official Brand Palette */
@@ -72,6 +74,11 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Arabic RTL Typography Mode */
+html[dir="rtl"] body {
+  font-family: var(--font-ar);
 }
 
 /* ==========================================================================
@@ -192,6 +199,33 @@ body {
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+/* Bilingual Language Switcher Button */
+.btn-lang-switch {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.84rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.btn-lang-switch:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.lang-icon {
+  color: #60a5fa;
 }
 
 .date-display {
@@ -355,6 +389,20 @@ body {
   color: var(--brand-navy);
 }
 
+/* RTL Mirrored Borders for KPI Cards */
+html[dir="rtl"] .card-in-progress {
+  border-left: 1px solid var(--surface-border);
+  border-right: 4.5px solid #0284c7;
+}
+html[dir="rtl"] .card-delayed {
+  border-left: 1px solid var(--surface-border);
+  border-right: 4.5px solid var(--brand-red);
+}
+html[dir="rtl"] .card-completed {
+  border-left: 1px solid var(--surface-border);
+  border-right: 4.5px solid var(--brand-navy);
+}
+
 /* ==========================================================================
    Toolbar: Search & Filter Tabs
    ========================================================================== */
@@ -416,6 +464,19 @@ body {
 }
 .btn-clear-search:hover {
   color: var(--text-main);
+}
+
+/* RTL Mirrored Search Input */
+html[dir="rtl"] .search-icon {
+  left: auto;
+  right: 1.1rem;
+}
+html[dir="rtl"] .search-input-wrapper input {
+  padding: 0.8rem 2.85rem 0.8rem 2.5rem;
+}
+html[dir="rtl"] .btn-clear-search {
+  right: auto;
+  left: 1rem;
 }
 
 .filter-pills {
@@ -500,6 +561,10 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+}
+
+html[dir="rtl"] .projects-table {
+  text-align: right;
 }
 
 .projects-table thead th {
@@ -667,6 +732,11 @@ body {
   content: "✓";
   font-weight: 800;
   font-size: 0.85rem;
+  margin-right: 0.2rem;
+}
+html[dir="rtl"] .status-pill.completed::before {
+  margin-right: 0;
+  margin-left: 0.2rem;
 }
 
 /* Progress Cell */
@@ -1179,6 +1249,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+html[dir="rtl"] .fab-new-project {
+  right: auto;
+  left: 1.5rem;
+}
+
 .fab-new-project:active {
   transform: scale(0.92);
 }
@@ -1195,6 +1270,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
   gap: 0.5rem;
   z-index: 2000;
   pointer-events: none;
+}
+
+html[dir="rtl"] .toast-container {
+  right: auto;
+  left: 1.5rem;
 }
 
 .toast {
@@ -1222,6 +1302,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .toast-success { border-left: 4px solid #10b981; }
 .toast-error { border-left: 4px solid var(--brand-red); }
 .toast-info { border-left: 4px solid #38bdf8; }
+
+html[dir="rtl"] .toast-success { border-left: none; border-right: 4px solid #10b981; }
+html[dir="rtl"] .toast-error { border-left: none; border-right: 4px solid var(--brand-red); }
+html[dir="rtl"] .toast-info { border-left: none; border-right: 4px solid #38bdf8; }
 
 /* ==========================================================================
    Responsive Breakpoints: Tablets & Mobile
@@ -1345,6 +1429,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
   .update-cell {
     max-width: 100%;
     text-align: right;
+  }
+
+  html[dir="rtl"] .update-cell {
+    text-align: left;
   }
 }
 

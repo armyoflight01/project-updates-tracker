@@ -1,52 +1,63 @@
 # Franchise Ready (فرنشايز ريدي السعودية) - Project & Updates Tracker
 
-An executive-level operational tracker designed for **Franchise Ready Saudi Arabia**. Built with pure **HTML5, CSS3, and Vanilla JavaScript**, featuring complete brand integration with the official Franchise Ready logo, colors, and design language.
+An executive-level operational tracker designed for **Franchise Ready Saudi Arabia**. Built with pure **HTML5, CSS3, and Vanilla JavaScript**, featuring full bilingual support (**English & Arabic RTL**), complete brand integration with the official Franchise Ready logo, colors, and 100% responsiveness on mobile, tablet, and desktop.
+
+---
+
+## 🌐 Full Bilingual Support (English & Arabic)
+
+- **One-Click Instant Toggle**: Click the **🌐 العربية / English** button in the top navigation bar to toggle between English and Arabic.
+- **RTL & LTR Automatic Layout**:
+  - Automatically switches document direction (`dir="rtl"` vs `dir="ltr"`).
+  - Uses Google's **Cairo** typography for Arabic and **Plus Jakarta Sans** for English.
+  - Mirrored table alignments, search bars, KPI indicator borders, and dialogs.
+- **Persistent Language Preference**: Saves your language choice in `localStorage` so the site remains in Arabic or English across page refreshes.
+- **Localized Data**: Real-time translation for all table headers, department names, project titles, status tags, progress percentages, updates notes, modals, validation errors, and print reports.
 
 ---
 
 ## 🎨 Franchise Ready Brand Integration
 
-- **Official Logo**: High-fidelity display of the Franchise Ready emblem (interlocking royal blue **F** & scarlet red **R** with arrow monogram), "Franchise Ready", and Arabic subtitle "فرنشايز ريدي السعودية".
+- **Official Logo**: High-fidelity display of the Franchise Ready emblem (royal blue **F** & scarlet red **R** with arrow monogram), "Franchise Ready", and Arabic subtitle "فرنشايز ريدي السعودية".
 - **Brand Colors**:
-  - **Royal Blue & Deep Navy** (`#3654a4`, `#1a326b`): Core headers, active tabs, completed status, primary badges.
+  - **Royal Blue & Deep Navy** (`#3654a4`, `#1a326b`): Headers, active tabs, completed status, primary badges.
   - **Scarlet Red** (`#ec173a`): Brand accent lines, live status badge, alert cards, primary `+ New Project` button, and progress indicators.
   - **Pure White & Slate** (`#ffffff`, `#f3f6fa`): Clean high-contrast cards and backgrounds.
 - **Browser Favicon**: Tab icon set directly to the Franchise Ready emblem.
-- **Executive Print Layout**: Formatted for PDF report generation featuring the Franchise Ready corporate header format.
 
 ---
 
 ## 🌟 Key Features
 
 1. **Dashboard Overview**:
-   - 4 Dynamic KPI metrics cards (**Total Projects**, **In Progress**, **Delayed / Urgent**, **Completed**).
-   - Real-time date indicator (`Tue, Nov 24, 2026`).
-   - Live pulsating status badge (`● Live Status`).
+   - 4 Dynamic KPI metrics cards (**Total Projects / إجمالي المشاريع**, **In Progress / قيد التنفيذ**, **Delayed / Urgent / متأخر وعاجل**, **Completed / مكتمل**).
+   - Real-time date indicator in localized format.
+   - Live pulsating status badge (`● Live Status / حالة مباشرة`).
 
 2. **Full Project Management (CRUD)**:
-   - **Add Project**: Auto-suggests project code (`PRJ-106`), handles title, client department, project manager, status, due date, live progress slider, and operational updates.
+   - **Add Project**: Auto-suggests project code (`PRJ-106`), handles title, client department, project manager, status, due date, live progress slider, and operational updates in both languages.
    - **Edit Project**: Modal with pre-filled project parameters.
    - **Delete Project**: Confirmation modal with safeguards.
    - **Inline Updates Editing**: Click directly on any "Latest Updates" cell in the table to log quick updates without opening the full form.
 
 3. **Search, Filter & Sorting**:
-   - **Real-Time Live Search**: Filters across codes, project titles, client departments, managers, and update notes.
+   - **Real-Time Live Search**: Filters across codes, project titles, client departments, managers, and update notes in both English and Arabic.
    - **Status Tabs**: Filter by *All Projects*, *In Progress*, *Delayed / Urgent*, and *Completed* with live count indicators.
    - **Column Sorting**: Sort ascending/descending by Due Date, Progress, Manager, or Department.
 
 4. **Zero-Configuration Local Database**:
    - Built-in persistent browser **LocalStorage**.
    - No external database (MySQL) or PHP backend required.
-   - "Reset Sample Data" button to restore default demo records anytime.
+   - "Reset Sample Data / استعادة البيانات التجريبية" button to restore default demo records anytime.
 
-5. **Responsive (Mobile, Tablet, Desktop)**:
+5. **100% Responsive (Mobile, Tablet, Desktop)**:
    - **Desktop**: Full data table with avatar badges, progress bars, and action icons.
    - **Tablet**: Adaptive 2-column KPI grid and fluid layout.
-   - **Mobile**: Responsive card view with clear data labels, touch-friendly modals, and a floating **`+` Action Button (FAB)** in the bottom corner.
+   - **Mobile**: Responsive card view with clear data labels, touch-friendly modals, and a floating **`+` Action Button (FAB)** in the bottom corner (mirrored to the left in RTL mode).
 
 6. **Export & Print**:
    - **Print / Save as PDF**: Clean executive report print styling (`@media print`) featuring the Franchise Ready corporate letterhead format.
-   - **Export CSV**: Instant one-click spreadsheet download for Excel or Google Sheets.
+   - **Export CSV**: Instant one-click spreadsheet download for Excel or Google Sheets in the active language.
 
 ---
 

@@ -1,85 +1,264 @@
 /**
  * Franchise Ready (فرنشايز ريدي السعودية) - Executive Tracker Controller
- * Full-featured pure JavaScript implementation with LocalStorage persistence,
- * Responsive UI, Print/PDF with Franchise Ready Branding, CSV Export, Inline Editing, and Search/Filters.
+ * Fully Bilingual: English (LTR) & Arabic (RTL) with LocalStorage persistence,
+ * Responsive UI (Mobile, Tablet, Desktop), Print/PDF, CSV Export, and Search/Filters.
  */
 
 (function () {
   'use strict';
 
-  // Storage Key for Franchise Ready Tracker
+  // Storage Keys
   const STORAGE_KEY = 'franchise_ready_tracker_v1';
+  const LANG_STORAGE_KEY = 'franchise_ready_lang';
 
-  // Sample Data matching the user's executive project portfolio
+  // Translation Dictionaries (English & Arabic)
+  const i18n = {
+    en: {
+      langToggleText: 'العربية',
+      appTitle: 'Project & Updates Tracker',
+      liveStatus: 'Live Status',
+      appSubtitle: 'Franchise Ready Saudi Arabia • فرنشايز ريدي • Executive Oversight of Active Initiatives & Milestone Progress',
+      printPdf: 'Print / Export PDF',
+      exportCsv: 'Export CSV',
+      newProject: 'New Project',
+      kpiTotal: 'TOTAL PROJECTS',
+      kpiInProgress: 'IN PROGRESS',
+      kpiDelayed: 'DELAYED / URGENT',
+      kpiCompleted: 'COMPLETED',
+      searchPlaceholder: 'Search project name, department, manager, or updates...',
+      filterAll: 'All Projects',
+      filterInProgress: 'In Progress',
+      filterDelayed: 'Delayed / Urgent',
+      filterCompleted: 'Completed',
+      colDept: 'CLIENT / DEPARTMENT',
+      colManager: 'PROJECT MANAGER',
+      colStatus: 'STATUS',
+      colProgress: 'PROGRESS',
+      colUpdates: 'LATEST UPDATES',
+      colDate: 'DUE DATE',
+      colActions: 'ACTIONS',
+      emptyTitle: 'No projects found',
+      emptyDesc: 'No project matches your search or filter criteria. Try resetting filters or adding a new project.',
+      btnAddProject: '+ Add New Project',
+      legendOnTrack: 'On Track / In Progress',
+      legendDelayed: 'Critical / Delayed Action Required',
+      inlineEditHint: 'Click directly on any Latest Update cell to edit inline',
+      resetSampleData: 'Reset Sample Data',
+      updatedPrefix: 'Updated',
+      modalAddTitle: 'Add New Project',
+      modalEditPrefix: 'Edit Project',
+      lblProjectCode: 'PROJECT CODE',
+      lblProjectName: 'PROJECT NAME',
+      phProjectName: 'Enter full project title...',
+      lblDepartment: 'CLIENT / DEPARTMENT',
+      phDepartment: 'e.g., Hospitality & Catering Division',
+      lblManager: 'PROJECT MANAGER',
+      phManager: 'e.g., Sarah Al-Mansoor',
+      lblStatus: 'STATUS',
+      optInProgress: 'In Progress',
+      optDelayed: 'Delayed / Urgent',
+      optCompleted: 'Completed',
+      lblDueDate: 'DUE DATE',
+      lblProgress: 'PROGRESS',
+      lblUpdates: 'LATEST UPDATES',
+      phUpdates: 'Summarize recent milestones, blockers, or next action items...',
+      btnCancel: 'Cancel',
+      btnSaveProject: 'Save Project',
+      inlineModalTitle: 'Edit Latest Update',
+      lblInlineUpdate: 'LATEST OPERATIONAL UPDATE',
+      phInlineUpdate: 'Type operational update...',
+      btnUpdateNow: 'Update Now',
+      deleteModalTitle: 'Delete Project',
+      deleteConfirmPrefix: 'Are you sure you want to remove project',
+      deleteWarning: 'This action cannot be undone.',
+      btnConfirmDelete: 'Delete Project',
+      printTitle: 'FRANCHISE READY SAUDI ARABIA • فرنشايز ريدي',
+      printSub: 'EXECUTIVE PROJECT & OPERATIONAL UPDATES REPORT',
+      printGen: 'Generated on',
+      printPortal: 'Executive Management Portal',
+      quickEditHint: '✎ Quick Edit',
+      progressText: 'Progress',
+      toastSampleRestored: 'Franchise Ready sample projects restored',
+      toastProjectSaved: 'Project saved successfully',
+      toastProjectAdded: 'New project added to tracker',
+      toastProjectUpdated: 'Project updated successfully',
+      toastProjectDeleted: 'Project removed successfully',
+      toastUpdateSaved: 'Operational update saved',
+      toastCsvExported: 'Franchise Ready data exported to CSV',
+      toastStorageError: 'Storage error: unable to save changes'
+    },
+    ar: {
+      langToggleText: 'English',
+      appTitle: 'نظام متابعة المشاريع والتحديثات',
+      liveStatus: 'حالة مباشرة',
+      appSubtitle: 'فرنشايز ريدي السعودية • المتابعة التنفيذية للمشاريع النشطة ونسب الإنجاز التشغيلي',
+      printPdf: 'طباعة / تصدير PDF',
+      exportCsv: 'تصدير CSV',
+      newProject: 'مشروع جديد',
+      kpiTotal: 'إجمالي المشاريع',
+      kpiInProgress: 'قيد التنفيذ',
+      kpiDelayed: 'متأخر / عاجل',
+      kpiCompleted: 'مكتمل',
+      searchPlaceholder: 'البحث عن اسم المشروع، القسم، المدير، أو التحديثات...',
+      filterAll: 'جميع المشاريع',
+      filterInProgress: 'قيد التنفيذ',
+      filterDelayed: 'متأخر / عاجل',
+      filterCompleted: 'مكتمل',
+      colDept: 'العميل / القسم',
+      colManager: 'مدير المشروع',
+      colStatus: 'الحالة',
+      colProgress: 'نسبة الإنجاز',
+      colUpdates: 'آخر التحديثات التشغيلية',
+      colDate: 'تاريخ التسليم',
+      colActions: 'الإجراءات',
+      emptyTitle: 'لم يتم العثور على مشاريع',
+      emptyDesc: 'لا توجد مشاريع تطابق معايير البحث أو التصفية الحالية. جرّب إعادة ضبط الفلاتر أو إضافة مشروع جديد.',
+      btnAddProject: '+ إضافة مشروع جديد',
+      legendOnTrack: 'تسير حسب الخطة / قيد التنفيذ',
+      legendDelayed: 'حرج / يتطلب إجراءات عاجلة',
+      inlineEditHint: 'انقر مباشرة على أي خلية لتعديل آخر التحديثات فورياً',
+      resetSampleData: 'استعادة البيانات التجريبية',
+      updatedPrefix: 'تم التحديث',
+      modalAddTitle: 'إضافة مشروع جديد',
+      modalEditPrefix: 'تعديل المشروع',
+      lblProjectCode: 'كود المشروع',
+      lblProjectName: 'اسم المشروع',
+      phProjectName: 'أدخل العنوان الكامل للمشروع...',
+      lblDepartment: 'العميل / القسم',
+      phDepartment: 'مثال: قسم الضيافة والتموين',
+      lblManager: 'مدير المشروع',
+      phManager: 'مثال: سارة المنصور',
+      lblStatus: 'الحالة',
+      optInProgress: 'قيد التنفيذ',
+      optDelayed: 'متأخر / عاجل',
+      optCompleted: 'مكتمل',
+      lblDueDate: 'تاريخ التسليم',
+      lblProgress: 'نسبة الإنجاز',
+      lblUpdates: 'آخر التحديثات',
+      phUpdates: 'ملخص أهم الإنجازات الأخيرة، المعوقات، أو خطوات العمل القادمة...',
+      btnCancel: 'إلغاء',
+      btnSaveProject: 'حفظ المشروع',
+      inlineModalTitle: 'تعديل آخر التحديثات',
+      lblInlineUpdate: 'آخر التحديثات التشغيلية',
+      phInlineUpdate: 'اكتب التحديث التشغيلي هنا...',
+      btnUpdateNow: 'تحديث الآن',
+      deleteModalTitle: 'حذف المشروع',
+      deleteConfirmPrefix: 'هل أنت متأكد من رغبتك في حذف المشروع',
+      deleteWarning: 'لا يمكن التراجع عن هذا الإجراء.',
+      btnConfirmDelete: 'تأكيد الحذف',
+      printTitle: 'فرنشايز ريدي السعودية • FRANCHISE READY',
+      printSub: 'تقرير متابعة المشاريع والتحديثات التشغيلية التنفيذية',
+      printGen: 'تم الاستخراج في',
+      printPortal: 'بوابة الإدارة التنفيذية',
+      quickEditHint: '✎ تعديل سريع',
+      progressText: 'الإنجاز',
+      toastSampleRestored: 'تمت استعادة مشاريع فرنشايز ريدي التجريبية',
+      toastProjectSaved: 'تم حفظ المشروع بنجاح',
+      toastProjectAdded: 'تمت إضافة المشروع الجديد بنجاح',
+      toastProjectUpdated: 'تم تحديث بيانات المشروع بنجاح',
+      toastProjectDeleted: 'تم حذف المشروع بنجاح',
+      toastUpdateSaved: 'تم حفظ التحديث التشغيلي',
+      toastCsvExported: 'تم تصدير بيانات فرنشايز ريدي إلى ملف CSV',
+      toastStorageError: 'خطأ في التخزين: تعذر حفظ التعديلات'
+    }
+  };
+
+  // Sample Data matching Franchise Ready Executive Portfolio (Bilingual)
   const DEFAULT_SAMPLE_PROJECTS = [
     {
       id: 'PRJ-101',
       code: 'PRJ-101',
-      name: 'Catering & Hospitality Division Launch',
-      department: 'Business Development',
-      manager: 'Khalid Al-Otaibi',
+      name_en: 'Catering & Hospitality Division Launch',
+      name_ar: 'إطلاق قطاع الضيافة وخدمات الإعاشة والتموين',
+      department_en: 'Business Development',
+      department_ar: 'تطوير الأعمال',
+      manager_en: 'Khalid Al-Otaibi',
+      manager_ar: 'خالد العتيبي',
       status: 'In Progress',
       progress: 85,
       dueDate: '2026-12-05',
-      latestUpdates: 'Corporate profile and buffet menus finalized; finalizing tableware supplier contracts.',
-      updatedAt: '2 hours ago',
+      latestUpdates_en: 'Corporate profile and buffet menus finalized; finalizing tableware supplier contracts.',
+      latestUpdates_ar: 'تم اعتماد الملف التعريفي وقوائم البوفيه؛ جاري إنهاء عقود موردي أدوات الضيافة الفاخرة.',
+      updatedAt_en: '2 hours ago',
+      updatedAt_ar: 'منذ ساعتين',
       lastModified: new Date(Date.now() - 2 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-102',
       code: 'PRJ-102',
-      name: 'Specialty Coffee Bar & Expo Setup',
-      department: 'Events & Exhibitions',
-      manager: 'Sarah Al-Mansoor',
+      name_en: 'Specialty Coffee Bar & Expo Setup',
+      name_ar: 'تجهيز ركن القهوة المختصة وجناح المعرض الدولي',
+      department_en: 'Events & Exhibitions',
+      department_ar: 'الفعاليات والمعارض',
+      manager_en: 'Sarah Al-Mansoor',
+      manager_ar: 'سارة المنصور',
       status: 'Delayed / Urgent',
       progress: 60,
       dueDate: '2026-11-28',
-      latestUpdates: 'Specialty coffee bar equipment shipment delayed at customs; backup local vendor sourced.',
-      updatedAt: 'Today, 10:30 AM',
+      latestUpdates_en: 'Specialty coffee bar equipment shipment delayed at customs; backup local vendor sourced.',
+      latestUpdates_ar: 'تأخرت شحنة معدات البار في الجمارك؛ تم توفير مورد محلي بديل للتركيب الفوري.',
+      updatedAt_en: 'Today, 10:30 AM',
+      updatedAt_ar: 'اليوم، 10:30 صباحاً',
       lastModified: new Date(Date.now() - 4 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-103',
       code: 'PRJ-103',
-      name: 'Hospitality Operations & Logistics Contract',
-      department: 'Operations & Logistics',
-      manager: 'Tariq Al-Dossary',
+      name_en: 'Hospitality Operations & Logistics Contract',
+      name_ar: 'عقد العمليات التشغيلية وسلاسل الإمداد اللوجستية',
+      department_en: 'Operations & Logistics',
+      department_ar: 'العمليات واللوجستيات',
+      manager_en: 'Tariq Al-Dossary',
+      manager_ar: 'طارق الدوسري',
       status: 'Completed',
       progress: 100,
       dueDate: '2026-11-20',
-      latestUpdates: 'Annual contract signed and full daily hospitality operations commenced with zero issues.',
-      updatedAt: 'Yesterday',
+      latestUpdates_en: 'Annual contract signed and full daily hospitality operations commenced with zero issues.',
+      latestUpdates_ar: 'تم توقيع العقد السنوي وبدء عمليات الضيافة اليومية المتكاملة بنجاح تام وبدون أي معوقات.',
+      updatedAt_en: 'Yesterday',
+      updatedAt_ar: 'أمس',
       lastModified: new Date(Date.now() - 24 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-104',
       code: 'PRJ-104',
-      name: 'Brand Identity & Omni-Channel Campaign',
-      department: 'Marketing & Brand',
-      manager: 'Noura Al-Ghamdi',
+      name_en: 'Brand Identity & Omni-Channel Campaign',
+      name_ar: 'الهوية البصرية والحملة التسويقية متعددة القنوات',
+      department_en: 'Marketing & Brand',
+      department_ar: 'التسويق والعلامة التجارية',
+      manager_en: 'Noura Al-Ghamdi',
+      manager_ar: 'نورة الغامدي',
       status: 'In Progress',
       progress: 45,
       dueDate: '2026-12-15',
-      latestUpdates: 'Brand identity assets completed; social media campaign launched across regional platforms.',
-      updatedAt: 'Nov 21, 2026',
+      latestUpdates_en: 'Brand identity assets completed; social media campaign launched across regional platforms.',
+      latestUpdates_ar: 'تم استكمال أصول الهوية البصرية وإطلاق الحملة الإعلانية عبر المنصات الإقليمية المستهدفة.',
+      updatedAt_en: 'Nov 21, 2026',
+      updatedAt_ar: '21 نوفمبر 2026',
       lastModified: new Date('2026-11-21T09:00:00').toISOString()
     },
     {
       id: 'PRJ-105',
       code: 'PRJ-105',
-      name: 'Food Safety & Hygiene Compliance Audit',
-      department: 'Quality & Compliance',
-      manager: 'Dr. Faisal Al-Harbi',
+      name_en: 'Food Safety & Hygiene Compliance Audit',
+      name_ar: 'تدقيق السلامة الغذائية ومعايير الامتثال والرقابة',
+      department_en: 'Quality & Compliance',
+      department_ar: 'الجودة والامتثال',
+      manager_en: 'Dr. Faisal Al-Harbi',
+      manager_ar: 'د. فيصل الحربي',
       status: 'In Progress',
       progress: 70,
       dueDate: '2026-12-01',
-      latestUpdates: 'Internal hygiene audit conducted; final ISO certification assessment scheduled for next week.',
-      updatedAt: 'Nov 18, 2026',
+      latestUpdates_en: 'Internal hygiene audit conducted; final ISO certification assessment scheduled for next week.',
+      latestUpdates_ar: 'تم تنفيذ التدقيق الداخلي للنظافة والسلامة؛ والتقييم النهائي لشهادة الآيزو مجدول للأسبوع القادم.',
+      updatedAt_en: 'Nov 18, 2026',
+      updatedAt_ar: '18 نوفمبر 2026',
       lastModified: new Date('2026-11-18T14:30:00').toISOString()
     }
   ];
 
   // Application State
+  let currentLang = 'en';
   let projects = [];
   let currentFilter = 'all';
   let searchQuery = '';
@@ -87,9 +266,11 @@
   let sortDirection = 'asc'; // 'asc' | 'desc'
   let deleteTargetId = null;
 
-  // DOM Elements
+  // DOM Elements Cache
   const el = {
-    // Header
+    htmlRoot: document.getElementById('htmlRoot'),
+    btnLangToggle: document.getElementById('btnLangToggle'),
+    langText: document.getElementById('langText'),
     dateText: document.getElementById('dateText'),
     btnPrint: document.getElementById('btnPrint'),
     btnExportCSV: document.getElementById('btnExportCSV'),
@@ -142,6 +323,7 @@
 
     // Inline Update Modal
     inlineEditModal: document.getElementById('inlineEditModal'),
+    inlineModalTitle: document.getElementById('inlineModalTitle'),
     btnCloseInlineModal: document.getElementById('btnCloseInlineModal'),
     btnCancelInline: document.getElementById('btnCancelInline'),
     inlineEditForm: document.getElementById('inlineEditForm'),
@@ -164,10 +346,90 @@
    * Initialize Application
    */
   function init() {
+    initLanguage();
     loadProjects();
     updateHeaderDate();
     bindEvents();
+    applyTranslations();
     render();
+  }
+
+  /**
+   * Language Configuration
+   */
+  function initLanguage() {
+    const saved = localStorage.getItem(LANG_STORAGE_KEY);
+    if (saved === 'ar' || saved === 'en') {
+      currentLang = saved;
+    } else {
+      // Auto-detect browser language if Arabic
+      const browserLang = (navigator.language || '').toLowerCase();
+      currentLang = browserLang.startsWith('ar') ? 'ar' : 'en';
+    }
+    setLanguage(currentLang, false);
+  }
+
+  function setLanguage(lang, reRender = true) {
+    currentLang = lang;
+    localStorage.setItem(LANG_STORAGE_KEY, lang);
+
+    if (el.htmlRoot) {
+      el.htmlRoot.setAttribute('lang', lang);
+      el.htmlRoot.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    }
+
+    if (el.langText) {
+      el.langText.textContent = i18n[lang].langToggleText;
+    }
+
+    applyTranslations();
+    updateHeaderDate();
+
+    if (reRender) {
+      render();
+    }
+  }
+
+  function applyTranslations() {
+    const t = i18n[currentLang];
+
+    // Static Elements with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(elem => {
+      const key = elem.getAttribute('data-i18n');
+      if (t[key]) {
+        elem.textContent = t[key];
+      }
+    });
+
+    // Placeholders
+    if (el.searchInput) el.searchInput.placeholder = t.searchPlaceholder;
+    if (el.projectName) el.projectName.placeholder = t.phProjectName;
+    if (el.clientDepartment) el.clientDepartment.placeholder = t.phDepartment;
+    if (el.projectManager) el.projectManager.placeholder = t.phManager;
+    if (el.latestUpdates) el.latestUpdates.placeholder = t.phUpdates;
+    if (el.inlineUpdateText) el.inlineUpdateText.placeholder = t.phInlineUpdate;
+  }
+
+  /**
+   * Helper to get localized field from project
+   */
+  function getProjectField(project, field) {
+    if (currentLang === 'ar') {
+      return project[`${field}_ar`] || project[`${field}_en`] || project[field] || '';
+    }
+    return project[`${field}_en`] || project[`${field}_ar`] || project[field] || '';
+  }
+
+  /**
+   * Localized Status Label
+   */
+  function getLocalizedStatus(status) {
+    if (currentLang === 'ar') {
+      if (status === 'In Progress') return 'قيد التنفيذ';
+      if (status === 'Delayed / Urgent') return 'متأخر / عاجل';
+      if (status === 'Completed') return 'مكتمل';
+    }
+    return status;
   }
 
   /**
@@ -183,39 +445,36 @@
         saveProjects();
       }
     } catch (err) {
-      console.error('Error loading projects from storage:', err);
+      console.error('Error loading projects:', err);
       projects = JSON.parse(JSON.stringify(DEFAULT_SAMPLE_PROJECTS));
     }
   }
 
-  /**
-   * Save data into LocalStorage
-   */
   function saveProjects() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       updateLastSync();
     } catch (err) {
-      console.error('Failed to save projects to storage:', err);
-      showToast('Storage error: unable to save changes', 'error');
+      console.error('Failed to save to storage:', err);
+      showToast(i18n[currentLang].toastStorageError, 'error');
     }
   }
 
-  /**
-   * Format header date display
-   */
   function updateHeaderDate() {
     const now = new Date();
+    const locale = currentLang === 'ar' ? 'ar-SA' : 'en-US';
     const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-    const dateStr = now.toLocaleDateString('en-US', options);
+    const dateStr = now.toLocaleDateString(locale, options);
     if (el.dateText) el.dateText.textContent = dateStr;
-    if (el.printDateStamp) el.printDateStamp.textContent = `${dateStr} ${now.toLocaleTimeString()}`;
+    if (el.printDateStamp) el.printDateStamp.textContent = `${dateStr} ${now.toLocaleTimeString(locale)}`;
   }
 
   function updateLastSync() {
     if (el.lastSyncTime) {
       const now = new Date();
-      el.lastSyncTime.textContent = `Updated: ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      const locale = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+      const label = i18n[currentLang].updatedPrefix;
+      el.lastSyncTime.textContent = `${label}: ${now.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })}`;
     }
   }
 
@@ -223,6 +482,15 @@
    * Bind DOM Event Listeners
    */
   function bindEvents() {
+    // Language Switcher Toggle
+    if (el.btnLangToggle) {
+      el.btnLangToggle.addEventListener('click', () => {
+        const nextLang = currentLang === 'en' ? 'ar' : 'en';
+        setLanguage(nextLang, true);
+        showToast(nextLang === 'ar' ? 'تم تحويل اللغة إلى العربية' : 'Switched to English', 'info');
+      });
+    }
+
     // Open New Project Modal
     if (el.btnOpenNewModal) el.btnOpenNewModal.addEventListener('click', openAddModal);
     if (el.fabNewProject) el.fabNewProject.addEventListener('click', openAddModal);
@@ -321,11 +589,15 @@
     // Reset Sample Data
     if (el.btnResetData) {
       el.btnResetData.addEventListener('click', () => {
-        if (confirm('Reset tracker to default Franchise Ready sample projects?')) {
+        const confirmMsg = currentLang === 'ar'
+          ? 'هل تريد استعادة مشاريع فرنشايز ريدي التجريبية الافتراضية؟'
+          : 'Reset tracker to default Franchise Ready sample projects?';
+
+        if (confirm(confirmMsg)) {
           projects = JSON.parse(JSON.stringify(DEFAULT_SAMPLE_PROJECTS));
           saveProjects();
           render();
-          showToast('Franchise Ready sample projects restored', 'info');
+          showToast(i18n[currentLang].toastSampleRestored, 'info');
         }
       });
     }
@@ -376,28 +648,48 @@
     // Search Filter
     if (searchQuery) {
       result = result.filter(p => {
+        const code = (p.code || '').toLowerCase();
+        const nameEn = (p.name_en || p.name || '').toLowerCase();
+        const nameAr = (p.name_ar || '').toLowerCase();
+        const deptEn = (p.department_en || p.department || '').toLowerCase();
+        const deptAr = (p.department_ar || '').toLowerCase();
+        const mgrEn = (p.manager_en || p.manager || '').toLowerCase();
+        const mgrAr = (p.manager_ar || '').toLowerCase();
+        const upEn = (p.latestUpdates_en || p.latestUpdates || '').toLowerCase();
+        const upAr = (p.latestUpdates_ar || '').toLowerCase();
+        const status = (p.status || '').toLowerCase();
+
         return (
-          (p.code && p.code.toLowerCase().includes(searchQuery)) ||
-          (p.name && p.name.toLowerCase().includes(searchQuery)) ||
-          (p.department && p.department.toLowerCase().includes(searchQuery)) ||
-          (p.manager && p.manager.toLowerCase().includes(searchQuery)) ||
-          (p.latestUpdates && p.latestUpdates.toLowerCase().includes(searchQuery)) ||
-          (p.status && p.status.toLowerCase().includes(searchQuery))
+          code.includes(searchQuery) ||
+          nameEn.includes(searchQuery) ||
+          nameAr.includes(searchQuery) ||
+          deptEn.includes(searchQuery) ||
+          deptAr.includes(searchQuery) ||
+          mgrEn.includes(searchQuery) ||
+          mgrAr.includes(searchQuery) ||
+          upEn.includes(searchQuery) ||
+          upAr.includes(searchQuery) ||
+          status.includes(searchQuery)
         );
       });
     }
 
     // Sorting
     result.sort((a, b) => {
-      let valA = a[sortColumn];
-      let valB = b[sortColumn];
+      let valA, valB;
 
       if (sortColumn === 'progress') {
-        valA = Number(valA) || 0;
-        valB = Number(valB) || 0;
+        valA = Number(a.progress) || 0;
+        valB = Number(b.progress) || 0;
+      } else if (sortColumn === 'department') {
+        valA = getProjectField(a, 'department').toLowerCase();
+        valB = getProjectField(b, 'department').toLowerCase();
+      } else if (sortColumn === 'manager') {
+        valA = getProjectField(a, 'manager').toLowerCase();
+        valB = getProjectField(b, 'manager').toLowerCase();
       } else {
-        valA = (valA || '').toString().toLowerCase();
-        valB = (valB || '').toString().toLowerCase();
+        valA = (a[sortColumn] || '').toString().toLowerCase();
+        valB = (b[sortColumn] || '').toString().toLowerCase();
       }
 
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
@@ -434,6 +726,7 @@
   function render() {
     updateKPIs();
     const items = getProcessedProjects();
+    const t = i18n[currentLang];
 
     if (!el.tableBody) return;
     el.tableBody.innerHTML = '';
@@ -457,13 +750,20 @@
         tr.classList.add('row-delayed-urgent');
       }
 
+      const pName = getProjectField(project, 'name');
+      const pDept = getProjectField(project, 'department');
+      const pManager = getProjectField(project, 'manager');
+      const pUpdates = getProjectField(project, 'latestUpdates');
+      const pUpdatedTime = getProjectField(project, 'updatedAt') || (currentLang === 'ar' ? 'مؤخراً' : 'Recently');
+      const pStatusLabel = getLocalizedStatus(project.status);
+
       // Initial for Avatar
-      const initial = (project.manager && project.manager.trim()) ? project.manager.trim().charAt(0).toUpperCase() : 'M';
+      const initial = pManager ? pManager.trim().charAt(0).toUpperCase() : 'M';
       let avatarClass = 'avatar-k';
-      if (initial === 'S') avatarClass = 'avatar-s';
-      else if (initial === 'T') avatarClass = 'avatar-t';
-      else if (initial === 'N') avatarClass = 'avatar-n';
-      else if (initial === 'F' || initial === 'D') avatarClass = 'avatar-s';
+      if (['S', 'س'].includes(initial)) avatarClass = 'avatar-s';
+      else if (['T', 'ط'].includes(initial)) avatarClass = 'avatar-t';
+      else if (['N', 'ن'].includes(initial)) avatarClass = 'avatar-n';
+      else if (['D', 'F', 'ف'].includes(initial)) avatarClass = 'avatar-s';
 
       // Status Class & Fill
       let statusClass = 'in-progress';
@@ -481,43 +781,43 @@
 
       tr.innerHTML = `
         <!-- Client / Department -->
-        <td class="td-dept" data-label="CLIENT / DEPARTMENT">
+        <td class="td-dept" data-label="${t.colDept}">
           <div class="dept-cell">
-            <div class="dept-icon-box" title="Department">
+            <div class="dept-icon-box" title="${escapeHTML(pDept)}">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
               </svg>
             </div>
             <div class="dept-info">
-              <span class="dept-name">${escapeHTML(project.department || 'General')}</span>
-              <span class="dept-project-code">${escapeHTML(project.code || '')} &bull; ${escapeHTML(project.name || '')}</span>
+              <span class="dept-name">${escapeHTML(pDept || (currentLang === 'ar' ? 'عام' : 'General'))}</span>
+              <span class="dept-project-code">${escapeHTML(project.code || '')} &bull; ${escapeHTML(pName || '')}</span>
             </div>
           </div>
         </td>
 
         <!-- Project Manager -->
-        <td data-label="PROJECT MANAGER">
+        <td data-label="${t.colManager}">
           <div class="manager-cell">
-            <div class="manager-avatar ${avatarClass}" title="${escapeHTML(project.manager || '')}">
+            <div class="manager-avatar ${avatarClass}" title="${escapeHTML(pManager)}">
               ${escapeHTML(initial)}
             </div>
-            <span class="manager-name">${escapeHTML(project.manager || 'Unassigned')}</span>
+            <span class="manager-name">${escapeHTML(pManager || (currentLang === 'ar' ? 'غير محدد' : 'Unassigned'))}</span>
           </div>
         </td>
 
         <!-- Status -->
-        <td data-label="STATUS">
+        <td data-label="${t.colStatus}">
           <span class="status-pill ${statusClass}">
             <span class="status-dot"></span>
-            ${escapeHTML(project.status || 'In Progress')}
+            ${escapeHTML(pStatusLabel)}
           </span>
         </td>
 
         <!-- Progress -->
-        <td data-label="PROGRESS">
+        <td data-label="${t.colProgress}">
           <div class="progress-cell">
             <div class="progress-header">
-              <span>Progress ${project.progress || 0}%</span>
+              <span>${t.progressText} ${project.progress || 0}%</span>
             </div>
             <div class="progress-track">
               <div class="progress-fill ${fillClass}" style="width: ${Math.min(100, Math.max(0, project.progress || 0))}%;"></div>
@@ -526,18 +826,18 @@
         </td>
 
         <!-- Latest Updates (Click directly to edit inline) -->
-        <td data-label="LATEST UPDATES">
-          <div class="update-cell" data-id="${project.id}" title="Click to edit update inline">
-            <div class="update-text">${escapeHTML(project.latestUpdates || 'No operational update logged yet.')}</div>
+        <td data-label="${t.colUpdates}">
+          <div class="update-cell" data-id="${project.id}" title="${t.inlineEditHint}">
+            <div class="update-text">${escapeHTML(pUpdates || (currentLang === 'ar' ? 'لم يتم تسجيل أي تحديث بعد.' : 'No operational update logged yet.'))}</div>
             <div class="update-meta">
-              <span>🕒 Updated: ${escapeHTML(project.updatedAt || 'Recently')}</span>
-              <span class="update-edit-hint">✎ Quick Edit</span>
+              <span>🕒 ${t.updatedPrefix}: ${escapeHTML(pUpdatedTime)}</span>
+              <span class="update-edit-hint">${t.quickEditHint}</span>
             </div>
           </div>
         </td>
 
         <!-- Due Date -->
-        <td data-label="DUE DATE">
+        <td data-label="${t.colDate}">
           <div class="date-cell ${isOverdue ? 'date-overdue' : ''}">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -550,15 +850,15 @@
         </td>
 
         <!-- Actions -->
-        <td class="td-actions" data-label="ACTIONS">
+        <td class="td-actions" data-label="${t.colActions}">
           <div class="actions-cell">
-            <button type="button" class="btn-action-icon btn-action-edit" data-id="${project.id}" title="Edit Project">
+            <button type="button" class="btn-action-icon btn-action-edit" data-id="${project.id}" title="${t.modalEditPrefix}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </button>
-            <button type="button" class="btn-action-icon btn-action-delete" data-id="${project.id}" title="Delete Project">
+            <button type="button" class="btn-action-icon btn-action-delete" data-id="${project.id}" title="${t.deleteModalTitle}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -603,8 +903,9 @@
    */
   function openAddModal() {
     clearErrors();
+    const t = i18n[currentLang];
     el.editProjectId.value = '';
-    el.modalTitle.textContent = 'Add New Project';
+    el.modalTitle.textContent = t.modalAddTitle;
     el.projectCode.value = generateNextCode();
     el.projectName.value = '';
     el.clientDepartment.value = '';
@@ -632,17 +933,18 @@
     if (!project) return;
 
     clearErrors();
+    const t = i18n[currentLang];
     el.editProjectId.value = project.id;
-    el.modalTitle.textContent = `Edit Project: ${project.code}`;
+    el.modalTitle.textContent = `${t.modalEditPrefix}: ${project.code}`;
     el.projectCode.value = project.code || '';
-    el.projectName.value = project.name || '';
-    el.clientDepartment.value = project.department || '';
-    el.projectManager.value = project.manager || '';
+    el.projectName.value = getProjectField(project, 'name');
+    el.clientDepartment.value = getProjectField(project, 'department');
+    el.projectManager.value = getProjectField(project, 'manager');
     el.projectStatus.value = project.status || 'In Progress';
     el.dueDate.value = project.dueDate || '';
     el.progressRange.value = project.progress || 0;
     el.progressValBadge.textContent = `${project.progress || 0}%`;
-    el.latestUpdates.value = project.latestUpdates || '';
+    el.latestUpdates.value = getProjectField(project, 'latestUpdates');
 
     el.projectModal.classList.add('show');
     el.projectName.focus();
@@ -659,6 +961,7 @@
   function handleProjectFormSubmit(e) {
     e.preventDefault();
     clearErrors();
+    const t = i18n[currentLang];
 
     const code = el.projectCode.value.trim();
     const name = el.projectName.value.trim();
@@ -672,27 +975,27 @@
     let hasError = false;
 
     if (!code) {
-      showFieldError('errProjectCode', 'Project code is required');
+      showFieldError('errProjectCode', currentLang === 'ar' ? 'كود المشروع مطلوب' : 'Project code is required');
       hasError = true;
     }
     if (!name) {
-      showFieldError('errProjectName', 'Project name is required');
+      showFieldError('errProjectName', currentLang === 'ar' ? 'اسم المشروع مطلوب' : 'Project name is required');
       hasError = true;
     }
     if (!department) {
-      showFieldError('errClientDepartment', 'Client/Department is required');
+      showFieldError('errClientDepartment', currentLang === 'ar' ? 'القسم أو العميل مطلوب' : 'Department is required');
       hasError = true;
     }
     if (!manager) {
-      showFieldError('errProjectManager', 'Project manager is required');
+      showFieldError('errProjectManager', currentLang === 'ar' ? 'اسم المدير مطلوب' : 'Project manager is required');
       hasError = true;
     }
     if (!dueDate) {
-      showFieldError('errDueDate', 'Due date is required');
+      showFieldError('errDueDate', currentLang === 'ar' ? 'تاريخ التسليم مطلوب' : 'Due date is required');
       hasError = true;
     }
     if (!updates) {
-      showFieldError('errLatestUpdates', 'Latest updates summary is required');
+      showFieldError('errLatestUpdates', currentLang === 'ar' ? 'ملخص التحديث مطلوب' : 'Latest updates summary is required');
       hasError = true;
     }
 
@@ -704,38 +1007,57 @@
       // Update existing
       const idx = projects.findIndex(p => p.id === editId);
       if (idx !== -1) {
-        projects[idx] = {
-          ...projects[idx],
+        const existing = projects[idx];
+        const updatePayload = {
+          ...existing,
           code,
-          name,
-          department,
-          manager,
           status,
           dueDate,
           progress,
-          latestUpdates: updates,
-          updatedAt: 'Just now',
           lastModified: new Date().toISOString()
         };
-        showToast(`Project ${code} updated successfully`, 'success');
+
+        if (currentLang === 'ar') {
+          updatePayload.name_ar = name;
+          updatePayload.department_ar = department;
+          updatePayload.manager_ar = manager;
+          updatePayload.latestUpdates_ar = updates;
+          updatePayload.updatedAt_ar = 'الآن';
+          if (!updatePayload.name_en) updatePayload.name_en = name;
+        } else {
+          updatePayload.name_en = name;
+          updatePayload.department_en = department;
+          updatePayload.manager_en = manager;
+          updatePayload.latestUpdates_en = updates;
+          updatePayload.updatedAt_en = 'Just now';
+          if (!updatePayload.name_ar) updatePayload.name_ar = name;
+        }
+
+        projects[idx] = updatePayload;
+        showToast(`${t.toastProjectUpdated} (${code})`, 'success');
       }
     } else {
       // Create new
       const newProject = {
         id: code,
         code,
-        name,
-        department,
-        manager,
+        name_en: name,
+        name_ar: name,
+        department_en: department,
+        department_ar: department,
+        manager_en: manager,
+        manager_ar: manager,
         status,
         dueDate,
         progress,
-        latestUpdates: updates,
-        updatedAt: 'Just now',
+        latestUpdates_en: updates,
+        latestUpdates_ar: updates,
+        updatedAt_en: 'Just now',
+        updatedAt_ar: 'الآن',
         lastModified: new Date().toISOString()
       };
       projects.unshift(newProject);
-      showToast(`New project ${code} added to tracker`, 'success');
+      showToast(`${t.toastProjectAdded} (${code})`, 'success');
     }
 
     saveProjects();
@@ -750,7 +1072,7 @@
 
   function clearErrors() {
     const errorEls = document.querySelectorAll('.field-error');
-    errorEls.forEach(el => el.textContent = '');
+    errorEls.forEach(elem => elem.textContent = '');
   }
 
   /**
@@ -760,12 +1082,17 @@
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
 
+    const pName = getProjectField(project, 'name');
+    const pDept = getProjectField(project, 'department');
+    const pMgr = getProjectField(project, 'manager');
+    const pUpdates = getProjectField(project, 'latestUpdates');
+
     el.inlineProjectId.value = project.id;
     el.inlineProjectInfo.innerHTML = `
-      <strong>${escapeHTML(project.code)}</strong>: ${escapeHTML(project.name)}<br>
-      <span class="text-muted" style="font-size: 0.8rem;">${escapeHTML(project.department)} &bull; Manager: ${escapeHTML(project.manager)}</span>
+      <strong>${escapeHTML(project.code)}</strong>: ${escapeHTML(pName)}<br>
+      <span class="text-muted" style="font-size: 0.8rem;">${escapeHTML(pDept)} &bull; ${escapeHTML(pMgr)}</span>
     `;
-    el.inlineUpdateText.value = project.latestUpdates || '';
+    el.inlineUpdateText.value = pUpdates || '';
     el.inlineEditModal.classList.add('show');
     el.inlineUpdateText.focus();
   }
@@ -782,12 +1109,17 @@
 
     const project = projects.find(p => p.id === id);
     if (project) {
-      project.latestUpdates = text;
-      project.updatedAt = 'Just now';
+      if (currentLang === 'ar') {
+        project.latestUpdates_ar = text;
+        project.updatedAt_ar = 'الآن';
+      } else {
+        project.latestUpdates_en = text;
+        project.updatedAt_en = 'Just now';
+      }
       project.lastModified = new Date().toISOString();
       saveProjects();
       render();
-      showToast(`Latest update for ${project.code} saved`, 'success');
+      showToast(i18n[currentLang].toastUpdateSaved, 'success');
     }
     closeInlineModal();
   }
@@ -799,8 +1131,9 @@
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
 
+    const pName = getProjectField(project, 'name');
     deleteTargetId = projectId;
-    el.deleteProjectName.textContent = `${project.code} (${project.name})`;
+    el.deleteProjectName.textContent = `${project.code} (${pName})`;
     el.deleteConfirmModal.classList.add('show');
   }
 
@@ -818,41 +1151,53 @@
     saveProjects();
     render();
     closeDeleteModal();
-    showToast(`${code} removed successfully`, 'info');
+    showToast(`${code} ${i18n[currentLang].toastProjectDeleted}`, 'info');
   }
 
   /**
-   * Export to CSV
+   * Export to CSV (Bilingual Support)
    */
   function exportToCSV() {
     if (projects.length === 0) {
-      showToast('No project data to export', 'error');
+      showToast(currentLang === 'ar' ? 'لا توجد بيانات للتصدير' : 'No project data to export', 'error');
       return;
     }
 
-    const headers = ['Project Code', 'Project Name', 'Client/Department', 'Project Manager', 'Status', 'Progress %', 'Due Date', 'Latest Updates', 'Last Updated'];
+    const t = i18n[currentLang];
+    const headers = [
+      t.lblProjectCode,
+      t.lblProjectName,
+      t.lblDepartment,
+      t.lblManager,
+      t.lblStatus,
+      `${t.lblProgress} %`,
+      t.lblDueDate,
+      t.lblUpdates,
+      t.updatedPrefix
+    ];
+
     const rows = projects.map(p => [
       `"${(p.code || '').replace(/"/g, '""')}"`,
-      `"${(p.name || '').replace(/"/g, '""')}"`,
-      `"${(p.department || '').replace(/"/g, '""')}"`,
-      `"${(p.manager || '').replace(/"/g, '""')}"`,
-      `"${(p.status || '').replace(/"/g, '""')}"`,
+      `"${getProjectField(p, 'name').replace(/"/g, '""')}"`,
+      `"${getProjectField(p, 'department').replace(/"/g, '""')}"`,
+      `"${getProjectField(p, 'manager').replace(/"/g, '""')}"`,
+      `"${getLocalizedStatus(p.status).replace(/"/g, '""')}"`,
       p.progress || 0,
       `"${p.dueDate || ''}"`,
-      `"${(p.latestUpdates || '').replace(/"/g, '""')}"`,
-      `"${p.updatedAt || ''}"`
+      `"${getProjectField(p, 'latestUpdates').replace(/"/g, '""')}"`,
+      `"${getProjectField(p, 'updatedAt') || ''}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Franchise_Ready_Projects_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `Franchise_Ready_Projects_${currentLang}_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    showToast('Franchise Ready data exported to CSV', 'success');
+    showToast(t.toastCsvExported, 'success');
   }
 
   /**

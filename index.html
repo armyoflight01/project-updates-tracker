@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" id="htmlRoot">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -23,16 +23,27 @@
 
         <div class="header-titles">
           <div class="title-row">
-            <h1 class="app-title">Project &amp; Updates Tracker</h1>
+            <h1 class="app-title" data-i18n="appTitle">Project &amp; Updates Tracker</h1>
             <span class="live-status-badge">
-              <span class="live-dot"></span> Live Status
+              <span class="live-dot"></span> <span data-i18n="liveStatus">Live Status</span>
             </span>
           </div>
-          <p class="app-subtitle">Franchise Ready Saudi Arabia &bull; فرنشايز ريدي &bull; Executive Oversight of Active Initiatives &amp; Milestone Progress</p>
+          <p class="app-subtitle" data-i18n="appSubtitle">Franchise Ready Saudi Arabia &bull; فرنشايز ريدي &bull; Executive Oversight of Active Initiatives &amp; Milestone Progress</p>
         </div>
       </div>
 
       <div class="header-actions">
+        <!-- Bilingual Language Switcher (EN / العربية) -->
+        <button type="button" class="btn btn-lang-switch" id="btnLangToggle" title="Switch Language / تغيير اللغة">
+          <svg class="lang-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span id="langText">العربية</span>
+        </button>
+
+        <!-- Current Date Indicator -->
         <div class="date-display" id="currentDateDisplay">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -49,7 +60,7 @@
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
           </svg>
-          <span>Print / Export PDF</span>
+          <span data-i18n="printPdf">Print / Export PDF</span>
         </button>
 
         <button type="button" class="btn btn-secondary btn-export-csv" id="btnExportCSV" title="Export data to CSV spreadsheet">
@@ -58,7 +69,7 @@
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          <span>Export CSV</span>
+          <span data-i18n="exportCsv">Export CSV</span>
         </button>
 
         <button type="button" class="btn btn-primary btn-new-project" id="btnOpenNewModal">
@@ -67,7 +78,7 @@
             <line x1="12" y1="8" x2="12" y2="16"></line>
             <line x1="8" y1="12" x2="16" y2="12"></line>
           </svg>
-          <span>New Project</span>
+          <span data-i18n="newProject">New Project</span>
         </button>
       </div>
     </div>
@@ -80,7 +91,7 @@
       <!-- Total Projects -->
       <div class="kpi-card card-total">
         <div class="kpi-info">
-          <span class="kpi-label">TOTAL PROJECTS</span>
+          <span class="kpi-label" data-i18n="kpiTotal">TOTAL PROJECTS</span>
           <span class="kpi-value" id="kpiTotal">0</span>
         </div>
         <div class="kpi-icon-box total-icon">
@@ -97,7 +108,7 @@
       <!-- In Progress -->
       <div class="kpi-card card-in-progress">
         <div class="kpi-info">
-          <span class="kpi-label">IN PROGRESS</span>
+          <span class="kpi-label" data-i18n="kpiInProgress">IN PROGRESS</span>
           <span class="kpi-value" id="kpiInProgress">0</span>
         </div>
         <div class="kpi-icon-box progress-icon">
@@ -107,10 +118,10 @@
         </div>
       </div>
 
-      <!-- Delayed / Urgent (Franchise Ready Red Alert) -->
+      <!-- Delayed / Urgent -->
       <div class="kpi-card card-delayed">
         <div class="kpi-info">
-          <span class="kpi-label">DELAYED / URGENT</span>
+          <span class="kpi-label" data-i18n="kpiDelayed">DELAYED / URGENT</span>
           <span class="kpi-value alert-text" id="kpiDelayed">0</span>
         </div>
         <div class="kpi-icon-box delayed-icon">
@@ -125,7 +136,7 @@
       <!-- Completed -->
       <div class="kpi-card card-completed">
         <div class="kpi-info">
-          <span class="kpi-label">COMPLETED</span>
+          <span class="kpi-label" data-i18n="kpiCompleted">COMPLETED</span>
           <span class="kpi-value" id="kpiCompleted">0</span>
         </div>
         <div class="kpi-icon-box completed-icon">
@@ -149,10 +160,18 @@
       </div>
 
       <div class="filter-pills" role="tablist">
-        <button type="button" class="filter-btn active" data-filter="all">All Projects <span class="badge-count" id="countAll">0</span></button>
-        <button type="button" class="filter-btn" data-filter="In Progress">In Progress <span class="badge-count" id="countInProgress">0</span></button>
-        <button type="button" class="filter-btn" data-filter="Delayed / Urgent">Delayed / Urgent <span class="badge-count alert-count" id="countDelayed">0</span></button>
-        <button type="button" class="filter-btn" data-filter="Completed">Completed <span class="badge-count" id="countCompleted">0</span></button>
+        <button type="button" class="filter-btn active" data-filter="all">
+          <span data-i18n="filterAll">All Projects</span> <span class="badge-count" id="countAll">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="In Progress">
+          <span data-i18n="filterInProgress">In Progress</span> <span class="badge-count" id="countInProgress">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="Delayed / Urgent">
+          <span data-i18n="filterDelayed">Delayed / Urgent</span> <span class="badge-count alert-count" id="countDelayed">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="Completed">
+          <span data-i18n="filterCompleted">Completed</span> <span class="badge-count" id="countCompleted">0</span>
+        </button>
       </div>
     </section>
 
@@ -164,40 +183,40 @@
             <tr>
               <th scope="col" class="th-dept sortable" data-sort="department">
                 <div class="th-content">
-                  <span>CLIENT / DEPARTMENT</span>
+                  <span data-i18n="colDept">CLIENT / DEPARTMENT</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
               <th scope="col" class="th-manager sortable" data-sort="manager">
                 <div class="th-content">
-                  <span>PROJECT MANAGER</span>
+                  <span data-i18n="colManager">PROJECT MANAGER</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
               <th scope="col" class="th-status sortable" data-sort="status">
                 <div class="th-content">
-                  <span>STATUS</span>
+                  <span data-i18n="colStatus">STATUS</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
               <th scope="col" class="th-progress sortable" data-sort="progress">
                 <div class="th-content">
-                  <span>PROGRESS</span>
+                  <span data-i18n="colProgress">PROGRESS</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
               <th scope="col" class="th-updates">
                 <div class="th-content">
-                  <span>LATEST UPDATES</span>
+                  <span data-i18n="colUpdates">LATEST UPDATES</span>
                 </div>
               </th>
               <th scope="col" class="th-date sortable" data-sort="dueDate">
                 <div class="th-content">
-                  <span>DUE DATE</span>
+                  <span data-i18n="colDate">DUE DATE</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
-              <th scope="col" class="th-actions text-center">ACTIONS</th>
+              <th scope="col" class="th-actions text-center" data-i18n="colActions">ACTIONS</th>
             </tr>
           </thead>
           <tbody id="projectsTableBody">
@@ -209,9 +228,11 @@
       <!-- Empty State -->
       <div class="empty-state" id="emptyState" style="display: none;">
         <div class="empty-icon">📁</div>
-        <h3>No projects found</h3>
-        <p>No project matches your search or filter criteria. Try resetting filters or adding a new project.</p>
-        <button type="button" class="btn btn-primary" id="btnEmptyCreate">+ Add New Project</button>
+        <h3 data-i18n="emptyTitle">No projects found</h3>
+        <p data-i18n="emptyDesc">No project matches your search or filter criteria. Try resetting filters or adding a new project.</p>
+        <button type="button" class="btn btn-primary" id="btnEmptyCreate">
+          <span data-i18n="btnAddProject">+ Add New Project</span>
+        </button>
       </div>
 
       <!-- Table Footer / Legend / Controls -->
@@ -219,15 +240,15 @@
         <div class="legend-group">
           <div class="legend-item">
             <span class="legend-dot dot-blue"></span>
-            <span>On Track / In Progress</span>
+            <span data-i18n="legendOnTrack">On Track / In Progress</span>
           </div>
           <div class="legend-item">
             <span class="legend-dot dot-red"></span>
-            <span>Critical / Delayed Action Required</span>
+            <span data-i18n="legendDelayed">Critical / Delayed Action Required</span>
           </div>
           <div class="legend-item inline-edit-hint">
             <span class="hint-icon">✦</span>
-            <span>Click directly on any <strong>Latest Update</strong> cell to edit inline</span>
+            <span data-i18n="inlineEditHint">Click directly on any <strong>Latest Update</strong> cell to edit inline</span>
           </div>
         </div>
 
@@ -239,7 +260,7 @@
               <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
               <path d="M8 16H3v5"></path>
             </svg>
-            <span>Reset Sample Data</span>
+            <span data-i18n="resetSampleData">Reset Sample Data</span>
           </button>
           <span class="last-sync-time" id="lastSyncTime">Updated: Nov 24, 2026</span>
         </div>
@@ -278,12 +299,12 @@
           <!-- Row 1: Code & Name -->
           <div class="form-row form-grid-2">
             <div class="form-group">
-              <label for="projectCode">PROJECT CODE <span class="required">*</span></label>
+              <label for="projectCode"><span data-i18n="lblProjectCode">PROJECT CODE</span> <span class="required">*</span></label>
               <input type="text" id="projectCode" class="form-control" placeholder="PRJ-101" required>
               <small class="field-error" id="errProjectCode"></small>
             </div>
             <div class="form-group">
-              <label for="projectName">PROJECT NAME <span class="required">*</span></label>
+              <label for="projectName"><span data-i18n="lblProjectName">PROJECT NAME</span> <span class="required">*</span></label>
               <input type="text" id="projectName" class="form-control" placeholder="Enter full project title..." required>
               <small class="field-error" id="errProjectName"></small>
             </div>
@@ -292,12 +313,12 @@
           <!-- Row 2: Department & Manager -->
           <div class="form-row form-grid-2">
             <div class="form-group">
-              <label for="clientDepartment">CLIENT / DEPARTMENT <span class="required">*</span></label>
+              <label for="clientDepartment"><span data-i18n="lblDepartment">CLIENT / DEPARTMENT</span> <span class="required">*</span></label>
               <input type="text" id="clientDepartment" class="form-control" placeholder="e.g., Hospitality & Catering Division" required>
               <small class="field-error" id="errClientDepartment"></small>
             </div>
             <div class="form-group">
-              <label for="projectManager">PROJECT MANAGER <span class="required">*</span></label>
+              <label for="projectManager"><span data-i18n="lblManager">PROJECT MANAGER</span> <span class="required">*</span></label>
               <input type="text" id="projectManager" class="form-control" placeholder="e.g., Sarah Al-Mansoor" required>
               <small class="field-error" id="errProjectManager"></small>
             </div>
@@ -306,18 +327,18 @@
           <!-- Row 3: Status, Due Date, Progress -->
           <div class="form-row form-grid-3">
             <div class="form-group">
-              <label for="projectStatus">STATUS <span class="required">*</span></label>
+              <label for="projectStatus"><span data-i18n="lblStatus">STATUS</span> <span class="required">*</span></label>
               <div class="select-wrapper">
                 <select id="projectStatus" class="form-control" required>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Delayed / Urgent">Delayed / Urgent</option>
-                  <option value="Completed">Completed</option>
+                  <option value="In Progress" data-i18n="optInProgress">In Progress</option>
+                  <option value="Delayed / Urgent" data-i18n="optDelayed">Delayed / Urgent</option>
+                  <option value="Completed" data-i18n="optCompleted">Completed</option>
                 </select>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="dueDate">DUE DATE <span class="required">*</span></label>
+              <label for="dueDate"><span data-i18n="lblDueDate">DUE DATE</span> <span class="required">*</span></label>
               <div class="date-input-wrap">
                 <input type="date" id="dueDate" class="form-control" required>
               </div>
@@ -326,7 +347,7 @@
 
             <div class="form-group">
               <div class="progress-label-row">
-                <label for="progressRange">PROGRESS</label>
+                <label for="progressRange" data-i18n="lblProgress">PROGRESS</label>
                 <span class="progress-badge-val" id="progressValBadge">0%</span>
               </div>
               <div class="range-slider-wrapper">
@@ -337,21 +358,21 @@
 
           <!-- Row 4: Latest Updates -->
           <div class="form-group">
-            <label for="latestUpdates">LATEST UPDATES <span class="required">*</span></label>
+            <label for="latestUpdates"><span data-i18n="lblUpdates">LATEST UPDATES</span> <span class="required">*</span></label>
             <textarea id="latestUpdates" rows="3" class="form-control" placeholder="Summarize recent milestones, blockers, or next action items..." required></textarea>
             <small class="field-error" id="errLatestUpdates"></small>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-cancel" id="btnCancelModal">Cancel</button>
+          <button type="button" class="btn btn-cancel" id="btnCancelModal" data-i18n="btnCancel">Cancel</button>
           <button type="submit" class="btn btn-save" id="btnSaveProject">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
               <polyline points="7 3 7 8 15 8"></polyline>
             </svg>
-            <span>Save Project</span>
+            <span data-i18n="btnSaveProject">Save Project</span>
           </button>
         </div>
       </form>
@@ -363,7 +384,7 @@
     <div class="modal-dialog modal-sm" role="dialog">
       <div class="modal-header">
         <div class="modal-title-wrap">
-          <h2 class="modal-title" id="inlineModalTitle">Edit Latest Update</h2>
+          <h2 class="modal-title" id="inlineModalTitle" data-i18n="inlineModalTitle">Edit Latest Update</h2>
         </div>
         <button type="button" class="btn-modal-close" id="btnCloseInlineModal">✕</button>
       </div>
@@ -372,13 +393,13 @@
         <div class="modal-body">
           <div class="inline-project-info" id="inlineProjectInfo"></div>
           <div class="form-group">
-            <label for="inlineUpdateText">LATEST OPERATIONAL UPDATE</label>
+            <label for="inlineUpdateText" data-i18n="lblInlineUpdate">LATEST OPERATIONAL UPDATE</label>
             <textarea id="inlineUpdateText" rows="4" class="form-control" required placeholder="Type operational update..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-cancel" id="btnCancelInline">Cancel</button>
-          <button type="submit" class="btn btn-save">Update Now</button>
+          <button type="button" class="btn btn-cancel" id="btnCancelInline" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="btn btn-save" data-i18n="btnUpdateNow">Update Now</button>
         </div>
       </form>
     </div>
@@ -388,16 +409,16 @@
   <div class="modal-backdrop" id="deleteConfirmModal" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-danger" role="dialog">
       <div class="modal-header modal-header-danger">
-        <h2 class="modal-title">Delete Project</h2>
+        <h2 class="modal-title" data-i18n="deleteModalTitle">Delete Project</h2>
         <button type="button" class="btn-modal-close" id="btnCloseDeleteModal">✕</button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to remove project <strong id="deleteProjectName"></strong>?</p>
-        <p class="text-muted text-sm">This action cannot be undone.</p>
+        <p><span data-i18n="deleteConfirmPrefix">Are you sure you want to remove project</span> <strong id="deleteProjectName"></strong>?</p>
+        <p class="text-muted text-sm" data-i18n="deleteWarning">This action cannot be undone.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-cancel" id="btnCancelDelete">Cancel</button>
-        <button type="button" class="btn btn-danger" id="btnConfirmDelete">Delete Project</button>
+        <button type="button" class="btn btn-cancel" id="btnCancelDelete" data-i18n="btnCancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete" data-i18n="btnConfirmDelete">Delete Project</button>
       </div>
     </div>
   </div>
@@ -410,11 +431,11 @@
     <div class="print-brand-wrap">
       <img src="assets/logo.png" alt="Franchise Ready Logo" class="print-logo">
       <div>
-        <h2>FRANCHISE READY SAUDI ARABIA &bull; فرنشايز ريدي</h2>
-        <p>EXECUTIVE PROJECT &amp; OPERATIONAL UPDATES REPORT</p>
+        <h2 data-i18n="printTitle">FRANCHISE READY SAUDI ARABIA &bull; فرنشايز ريدي</h2>
+        <p data-i18n="printSub">EXECUTIVE PROJECT &amp; OPERATIONAL UPDATES REPORT</p>
       </div>
     </div>
-    <p class="print-meta-line">Generated on <span id="printDateStamp"></span> &bull; Executive Management Portal</p>
+    <p class="print-meta-line"><span data-i18n="printGen">Generated on</span> <span id="printDateStamp"></span> &bull; <span data-i18n="printPortal">Executive Management Portal</span></p>
   </div>
 
   <script src="js/app.js"></script>

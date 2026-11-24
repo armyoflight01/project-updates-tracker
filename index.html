@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YARAMAY | Project &amp; Updates Tracker - Computer Maintenance Services</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top App Navigation / YARAMAY Executive Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-brand">
+        <!-- Official YARAMAY Logo Card -->
+        <a href="index.html" class="brand-logo-card" title="YARAMAY Computer Maintenance Services">
+          <img src="assets/logo.png" alt="YARAMAY Computer Maintenance Services Logo" class="brand-logo-img">
+        </a>
+
+        <div class="header-titles">
+          <div class="title-row">
+            <h1 class="app-title">Project &amp; Updates Tracker</h1>
+            <span class="live-status-badge">
+              <span class="live-dot"></span> Live Status
+            </span>
+          </div>
+          <p class="app-subtitle">YARAMAY Computer Maintenance Services &bull; Executive Operations &amp; Milestone Oversight</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="date-display" id="currentDateDisplay">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="dateText">Tue, Nov 24, 2026</span>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-print" id="btnPrint" title="Print dashboard or save as PDF">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span>Print / Export PDF</span>
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-export-csv" id="btnExportCSV" title="Export data to CSV spreadsheet">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export CSV</span>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-new-project" id="btnOpenNewModal">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          <span>New Project</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- KPI Metrics Strip with YARAMAY Brand Accents -->
+    <section class="kpi-grid">
+      <!-- Total Projects -->
+      <div class="kpi-card card-total">
+        <div class="kpi-info">
+          <span class="kpi-label">TOTAL PROJECTS</span>
+          <span class="kpi-value" id="kpiTotal">0</span>
+        </div>
+        <div class="kpi-icon-box total-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- In Progress -->
+      <div class="kpi-card card-in-progress">
+        <div class="kpi-info">
+          <span class="kpi-label">IN PROGRESS</span>
+          <span class="kpi-value" id="kpiInProgress">0</span>
+        </div>
+        <div class="kpi-icon-box progress-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Delayed / Urgent (YARAMAY Red Alert) -->
+      <div class="kpi-card card-delayed">
+        <div class="kpi-info">
+          <span class="kpi-label">DELAYED / URGENT</span>
+          <span class="kpi-value alert-text" id="kpiDelayed">0</span>
+        </div>
+        <div class="kpi-icon-box delayed-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Completed -->
+      <div class="kpi-card card-completed">
+        <div class="kpi-info">
+          <span class="kpi-label">COMPLETED</span>
+          <span class="kpi-value" id="kpiCompleted">0</span>
+        </div>
+        <div class="kpi-icon-box completed-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar: Search & Status Filter Tabs -->
+    <section class="toolbar-section">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search project name, client, engineer, or update notes..." autocomplete="off">
+        <button type="button" class="btn-clear-search" id="btnClearSearch" title="Clear search" style="display: none;">✕</button>
+      </div>
+
+      <div class="filter-pills" role="tablist">
+        <button type="button" class="filter-btn active" data-filter="all">All Projects <span class="badge-count" id="countAll">0</span></button>
+        <button type="button" class="filter-btn" data-filter="In Progress">In Progress <span class="badge-count" id="countInProgress">0</span></button>
+        <button type="button" class="filter-btn" data-filter="Delayed / Urgent">Delayed / Urgent <span class="badge-count alert-count" id="countDelayed">0</span></button>
+        <button type="button" class="filter-btn" data-filter="Completed">Completed <span class="badge-count" id="countCompleted">0</span></button>
+      </div>
+    </section>
+
+    <!-- Data Presentation Section (Table for Desktop / Responsive Cards for Mobile) -->
+    <section class="data-table-container">
+      <div class="table-responsive">
+        <table class="projects-table" id="projectsTable">
+          <thead>
+            <tr>
+              <th scope="col" class="th-dept sortable" data-sort="department">
+                <div class="th-content">
+                  <span>CLIENT / SERVICE DEPT</span>
+                  <span class="sort-icon">⇅</span>
+                </div>
+              </th>
+              <th scope="col" class="th-manager sortable" data-sort="manager">
+                <div class="th-content">
+                  <span>LEAD ENGINEER / MANAGER</span>
+                  <span class="sort-icon">⇅</span>
+                </div>
+              </th>
+              <th scope="col" class="th-status sortable" data-sort="status">
+                <div class="th-content">
+                  <span>STATUS</span>
+                  <span class="sort-icon">⇅</span>
+                </div>
+              </th>
+              <th scope="col" class="th-progress sortable" data-sort="progress">
+                <div class="th-content">
+                  <span>PROGRESS</span>
+                  <span class="sort-icon">⇅</span>
+                </div>
+              </th>
+              <th scope="col" class="th-updates">
+                <div class="th-content">
+                  <span>LATEST OPERATIONAL UPDATES</span>
+                </div>
+              </th>
+              <th scope="col" class="th-date sortable" data-sort="dueDate">
+                <div class="th-content">
+                  <span>DUE DATE</span>
+                  <span class="sort-icon">⇅</span>
+                </div>
+              </th>
+              <th scope="col" class="th-actions text-center">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="projectsTableBody">
+            <!-- Rendered by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">📁</div>
+        <h3>No projects found</h3>
+        <p>No project matches your search or filter criteria. Try resetting filters or adding a new project.</p>
+        <button type="button" class="btn btn-primary" id="btnEmptyCreate">+ Add New Project</button>
+      </div>
+
+      <!-- Table Footer / Legend / Controls -->
+      <div class="table-footer">
+        <div class="legend-group">
+          <div class="legend-item">
+            <span class="legend-dot dot-blue"></span>
+            <span>On Track / In Progress</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot dot-red"></span>
+            <span>Critical / Delayed Action Required</span>
+          </div>
+          <div class="legend-item inline-edit-hint">
+            <span class="hint-icon">✦</span>
+            <span>Click directly on any <strong>Latest Update</strong> cell to edit inline</span>
+          </div>
+        </div>
+
+        <div class="footer-meta">
+          <button type="button" class="btn-text-action" id="btnResetData">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+              <path d="M8 16H3v5"></path>
+            </svg>
+            <span>Reset Sample Data</span>
+          </button>
+          <span class="last-sync-time" id="lastSyncTime">Updated: Nov 24, 2026</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Floating Action Button (FAB) -->
+  <button type="button" class="fab-new-project" id="fabNewProject" aria-label="Add New Project" title="Add New Project">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- Modal: Add / Edit Project -->
+  <div class="modal-backdrop" id="projectModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-header-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <h2 class="modal-title" id="modalTitle">Add New Project</h2>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseModal" aria-label="Close modal">✕</button>
+      </div>
+
+      <form id="projectForm" novalidate>
+        <input type="hidden" id="editProjectId" value="">
+
+        <div class="modal-body">
+          <!-- Row 1: Code & Name -->
+          <div class="form-row form-grid-2">
+            <div class="form-group">
+              <label for="projectCode">PROJECT CODE <span class="required">*</span></label>
+              <input type="text" id="projectCode" class="form-control" placeholder="PRJ-101" required>
+              <small class="field-error" id="errProjectCode"></small>
+            </div>
+            <div class="form-group">
+              <label for="projectName">PROJECT NAME <span class="required">*</span></label>
+              <input type="text" id="projectName" class="form-control" placeholder="e.g. Workstation Hardware Overhaul" required>
+              <small class="field-error" id="errProjectName"></small>
+            </div>
+          </div>
+
+          <!-- Row 2: Department & Manager -->
+          <div class="form-row form-grid-2">
+            <div class="form-group">
+              <label for="clientDepartment">CLIENT / SERVICE DEPT <span class="required">*</span></label>
+              <input type="text" id="clientDepartment" class="form-control" placeholder="e.g. Al-Faisaliah Corp / Hardware Maintenance" required>
+              <small class="field-error" id="errClientDepartment"></small>
+            </div>
+            <div class="form-group">
+              <label for="projectManager">LEAD ENGINEER / MANAGER <span class="required">*</span></label>
+              <input type="text" id="projectManager" class="form-control" placeholder="e.g. Sarah Al-Mansoor" required>
+              <small class="field-error" id="errProjectManager"></small>
+            </div>
+          </div>
+
+          <!-- Row 3: Status, Due Date, Progress -->
+          <div class="form-row form-grid-3">
+            <div class="form-group">
+              <label for="projectStatus">STATUS <span class="required">*</span></label>
+              <div class="select-wrapper">
+                <select id="projectStatus" class="form-control" required>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Delayed / Urgent">Delayed / Urgent</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="dueDate">DUE DATE <span class="required">*</span></label>
+              <div class="date-input-wrap">
+                <input type="date" id="dueDate" class="form-control" required>
+              </div>
+              <small class="field-error" id="errDueDate"></small>
+            </div>
+
+            <div class="form-group">
+              <div class="progress-label-row">
+                <label for="progressRange">PROGRESS</label>
+                <span class="progress-badge-val" id="progressValBadge">0%</span>
+              </div>
+              <div class="range-slider-wrapper">
+                <input type="range" id="progressRange" min="0" max="100" step="5" value="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Latest Updates -->
+          <div class="form-group">
+            <label for="latestUpdates">LATEST OPERATIONAL UPDATES <span class="required">*</span></label>
+            <textarea id="latestUpdates" rows="3" class="form-control" placeholder="Summarize recent technical milestones, hardware repairs, blockers, or next steps..." required></textarea>
+            <small class="field-error" id="errLatestUpdates"></small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="btnCancelModal">Cancel</button>
+          <button type="submit" class="btn btn-save" id="btnSaveProject">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Save Project</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Inline Quick-Edit Update Popover Modal -->
+  <div class="modal-backdrop" id="inlineEditModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h2 class="modal-title" id="inlineModalTitle">Edit Latest Update</h2>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseInlineModal">✕</button>
+      </div>
+      <form id="inlineEditForm">
+        <input type="hidden" id="inlineProjectId" value="">
+        <div class="modal-body">
+          <div class="inline-project-info" id="inlineProjectInfo"></div>
+          <div class="form-group">
+            <label for="inlineUpdateText">LATEST OPERATIONAL UPDATE</label>
+            <textarea id="inlineUpdateText" rows="4" class="form-control" required placeholder="Type operational maintenance update..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="btnCancelInline">Cancel</button>
+          <button type="submit" class="btn btn-save">Update Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="deleteConfirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-danger" role="dialog">
+      <div class="modal-header modal-header-danger">
+        <h2 class="modal-title">Delete Project</h2>
+        <button type="button" class="btn-modal-close" id="btnCloseDeleteModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove project <strong id="deleteProjectName"></strong>?</p>
+        <p class="text-muted text-sm">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" id="btnCancelDelete">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete">Delete Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Print Title (Only rendered in printed/PDF version) -->
+  <div class="print-header-cover" style="display: none;">
+    <div class="print-brand-wrap">
+      <img src="assets/logo.png" alt="YARAMAY Logo" class="print-logo">
+      <div>
+        <h2>YARAMAY COMPUTER MAINTENANCE SERVICES</h2>
+        <p>EXECUTIVE PROJECT &amp; OPERATIONAL UPDATES REPORT</p>
+      </div>
+    </div>
+    <p class="print-meta-line">Generated on <span id="printDateStamp"></span> &bull; Internal Management System</p>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

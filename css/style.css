@@ -1,0 +1,1442 @@
+/* ==========================================================================
+   YARAMAY Computer Maintenance Services - Executive Tracker Stylesheet
+   Corporate Identity: Deep Midnight Navy (#0d1b3e) & Signature Scarlet Red (#e01e26)
+   Responsive (Mobile, Tablet, Desktop) & Print/PDF Optimized
+   ========================================================================== */
+
+:root {
+  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* YARAMAY Official Brand Palette */
+  --brand-navy: #0d1b3e;          /* Navy from the "M" */
+  --brand-navy-dark: #071026;
+  --brand-navy-secondary: #172a56;
+  --brand-navy-light: #233b74;
+
+  --brand-red: #e01e26;           /* Crimson from the "Y" */
+  --brand-red-hover: #c4141c;
+  --brand-red-subtle: #fee2e2;
+  --brand-red-glow: rgba(224, 30, 38, 0.32);
+
+  /* Neutrals & Layout */
+  --body-bg: #f3f6fa;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --surface-border: #e2e8f0;
+  --surface-shadow: 0 4px 16px -2px rgba(13, 27, 62, 0.06), 0 2px 6px -2px rgba(13, 27, 62, 0.03);
+
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+
+  /* Status Tokens */
+  --status-inprogress-bg: #e0f2fe;
+  --status-inprogress-text: #0284c7;
+  --status-inprogress-dot: #0284c7;
+  --status-inprogress-bar: #0284c7;
+
+  --status-delayed-bg: #fee2e2;
+  --status-delayed-text: #e01e26;
+  --status-delayed-dot: #e01e26;
+  --status-delayed-bar: #e01e26;
+  --status-delayed-row: #fff5f5;
+
+  --status-completed-bg: #0d1b3e;
+  --status-completed-text: #ffffff;
+  --status-completed-dot: #38bdf8;
+  --status-completed-bar: #0d1b3e;
+
+  /* Design Constants */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--body-bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Header: YARAMAY Executive Midnight Bar with Red Accent
+   ========================================================================== */
+.app-header {
+  background: linear-gradient(180deg, #0e1e44 0%, #091533 100%);
+  color: #ffffff;
+  border-bottom: 4px solid var(--brand-red);
+  box-shadow: 0 4px 20px rgba(7, 16, 38, 0.35);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.95rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+/* YARAMAY Logo Presentation Card */
+.brand-logo-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: var(--transition);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-logo-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 30, 38, 0.25);
+  border-color: var(--brand-red);
+}
+
+.brand-logo-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.live-status-badge {
+  background-color: var(--brand-red);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 8px var(--brand-red-glow);
+}
+
+.live-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: inline-block;
+  animation: pulse-live 1.8s infinite;
+}
+
+@keyframes pulse-live {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.app-subtitle {
+  font-size: 0.82rem;
+  color: #a5b9e0;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.date-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+/* Button System */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Signature YARAMAY Red Primary Button */
+.btn-primary.btn-new-project {
+  background-color: var(--brand-red);
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--brand-red-glow);
+}
+
+.btn-primary.btn-new-project:hover {
+  background-color: var(--brand-red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(224, 30, 38, 0.45);
+}
+
+/* ==========================================================================
+   Main Content Layout
+   ========================================================================== */
+.main-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.75rem 1.75rem 3.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==========================================================================
+   KPI Metrics Grid with YARAMAY Accents
+   ========================================================================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--surface-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -4px rgba(13, 27, 62, 0.1);
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.kpi-value {
+  font-size: 2.15rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.kpi-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Total Card */
+.card-total .kpi-icon-box {
+  background-color: #f1f5f9;
+  color: var(--brand-navy);
+}
+
+/* In Progress Card */
+.card-in-progress {
+  border-left: 4.5px solid #0284c7;
+}
+.card-in-progress .kpi-icon-box {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+/* Delayed / Urgent Card (YARAMAY Red) */
+.card-delayed {
+  border-left: 4.5px solid var(--brand-red);
+}
+.card-delayed .kpi-icon-box {
+  background-color: var(--brand-red-subtle);
+  color: var(--brand-red);
+}
+.alert-text {
+  color: var(--brand-red);
+}
+
+/* Completed Card (YARAMAY Navy) */
+.card-completed {
+  border-left: 4.5px solid var(--brand-navy);
+}
+.card-completed .kpi-icon-box {
+  background-color: #e2e8f0;
+  color: var(--brand-navy);
+}
+
+/* ==========================================================================
+   Toolbar: Search & Filter Tabs
+   ========================================================================== */
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 320px;
+  max-width: 580px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 0.8rem 2.5rem 0.8rem 2.85rem;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  outline: none;
+  transition: var(--transition);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.search-input-wrapper input:focus {
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(224, 30, 38, 0.12);
+}
+
+.btn-clear-search {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.2rem;
+  border-radius: 50%;
+}
+.btn-clear-search:hover {
+  color: var(--text-main);
+}
+
+.filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface);
+  padding: 0.35rem 0.45rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
+  overflow-x: auto;
+}
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  color: var(--text-main);
+  background: #f1f5f9;
+}
+
+.filter-btn.active {
+  background: var(--brand-navy);
+  color: #ffffff;
+}
+
+.badge-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+}
+
+.filter-btn.active .badge-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.alert-count {
+  color: var(--brand-red);
+}
+.filter-btn.active .alert-count {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Table & Data Grid Presentation
+   ========================================================================== */
+.data-table-container {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.projects-table thead th {
+  background-color: var(--brand-navy);
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 1.05rem 1.25rem;
+  border: none;
+  white-space: nowrap;
+  user-select: none;
+  border-bottom: 2px solid var(--brand-red);
+}
+
+.projects-table thead th.sortable {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.projects-table thead th.sortable:hover {
+  background-color: var(--brand-navy-secondary);
+}
+
+.th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sort-icon {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.projects-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.projects-table tbody tr:hover {
+  background-color: var(--surface-hover);
+}
+
+.projects-table tbody tr.row-delayed-urgent {
+  background-color: var(--status-delayed-row);
+}
+.projects-table tbody tr.row-delayed-urgent:hover {
+  background-color: #ffeceb;
+}
+
+.projects-table td {
+  padding: 1.1rem 1.25rem;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+/* Department Cell */
+.dept-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dept-icon-box {
+  color: var(--brand-red);
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dept-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-name {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.dept-project-code {
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* Project Manager Cell */
+.manager-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.manager-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e0f2fe;
+  color: var(--brand-navy);
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid #bae6fd;
+}
+
+.manager-avatar.avatar-s { background-color: #fee2e2; color: var(--brand-red); border-color: #fecaca; }
+.manager-avatar.avatar-t { background-color: #e0e7ff; color: var(--brand-navy); border-color: #c7d2fe; }
+.manager-avatar.avatar-n { background-color: #fef3c7; color: #b45309; border-color: #fde68a; }
+.manager-avatar.avatar-k { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+
+.manager-name {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.status-pill.in-progress {
+  background-color: var(--status-inprogress-bg);
+  color: var(--status-inprogress-text);
+}
+.status-pill.in-progress .status-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background-color: var(--status-inprogress-dot);
+}
+
+.status-pill.delayed-urgent {
+  background-color: var(--status-delayed-bg);
+  color: var(--status-delayed-text);
+}
+.status-pill.delayed-urgent .status-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background-color: var(--status-delayed-dot);
+}
+
+.status-pill.completed {
+  background-color: var(--status-completed-bg);
+  color: var(--status-completed-text);
+}
+.status-pill.completed .status-dot {
+  display: none;
+}
+.status-pill.completed::before {
+  content: "✓";
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+/* Progress Cell */
+.progress-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 140px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.progress-track {
+  height: 6.5px;
+  width: 100%;
+  background-color: #e2e8f0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.progress-fill.fill-in-progress { background-color: var(--status-inprogress-bar); }
+.progress-fill.fill-delayed { background-color: var(--status-delayed-bar); }
+.progress-fill.fill-completed { background-color: var(--status-completed-bar); }
+
+/* Latest Updates Cell with Click-to-edit */
+.update-cell {
+  max-width: 380px;
+  cursor: pointer;
+  position: relative;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease;
+}
+
+.update-cell:hover {
+  background-color: rgba(224, 30, 38, 0.06);
+}
+
+.update-text {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-main);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.update-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  font-size: 0.74rem;
+  color: var(--text-light);
+}
+
+.update-edit-hint {
+  font-size: 0.72rem;
+  color: var(--brand-red);
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.update-cell:hover .update-edit-hint {
+  opacity: 1;
+}
+
+/* Due Date Cell */
+.date-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.date-cell svg {
+  color: #3b82f6;
+}
+
+.date-overdue {
+  color: var(--brand-red);
+  font-weight: 700;
+}
+.date-overdue svg {
+  color: var(--brand-red);
+}
+
+/* Action Buttons */
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-action-edit {
+  color: var(--brand-navy);
+}
+.btn-action-edit:hover {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.btn-action-delete {
+  color: var(--brand-red);
+}
+.btn-action-delete:hover {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* ==========================================================================
+   Table Footer & Legend
+   ========================================================================== */
+.table-footer {
+  padding: 1.1rem 1.5rem;
+  border-top: 1px solid var(--surface-border);
+  background-color: #fafbfd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.legend-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-dot {
+  width: 8.5px;
+  height: 8.5px;
+  border-radius: 50%;
+}
+.dot-blue { background-color: #0284c7; }
+.dot-red { background-color: var(--brand-red); }
+
+.inline-edit-hint {
+  color: var(--brand-red);
+  font-weight: 600;
+  background: #fef2f2;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn-text-action {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
+}
+.btn-text-action:hover {
+  color: var(--brand-red);
+}
+
+.last-sync-time {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+/* Empty State */
+.empty-state {
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.empty-icon {
+  font-size: 2.75rem;
+  opacity: 0.7;
+}
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.empty-state p {
+  color: var(--text-muted);
+  max-width: 420px;
+  font-size: 0.88rem;
+}
+
+/* ==========================================================================
+   Modals: YARAMAY Branded Dialogs
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(7, 16, 38, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 1rem;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-dialog {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px -8px rgba(7, 16, 38, 0.45);
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.modal-backdrop.show .modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.modal-dialog.modal-sm {
+  max-width: 460px;
+}
+
+/* Modal Header: YARAMAY Navy with Red Accent Line */
+.modal-header {
+  background: linear-gradient(180deg, #0d1b3e 0%, #071026 100%);
+  color: #ffffff;
+  padding: 1.15rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3.5px solid var(--brand-red);
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal-header-icon {
+  color: var(--brand-red);
+  display: flex;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: background-color 0.15s ease;
+}
+.btn-modal-close:hover {
+  background: var(--brand-red);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-height: calc(85vh - 130px);
+  overflow-y: auto;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr 1.3fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.form-group label .required {
+  color: var(--brand-red);
+}
+
+.form-control {
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.85rem;
+  outline: none;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.form-control:focus {
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(224, 30, 38, 0.12);
+}
+
+.form-control.is-invalid {
+  border-color: var(--brand-red);
+}
+
+.field-error {
+  font-size: 0.72rem;
+  color: var(--brand-red);
+  font-weight: 600;
+  min-height: 14px;
+}
+
+/* Custom Range Slider with Percentage Badge */
+.progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.progress-badge-val {
+  background-color: #fee2e2;
+  color: var(--brand-red);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #fecaca;
+}
+
+.range-slider-wrapper {
+  padding: 0.45rem 0;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--brand-red);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 1.15rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-cancel {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: var(--text-secondary);
+}
+.btn-cancel:hover {
+  background: #f1f5f9;
+  color: var(--text-main);
+}
+
+.btn-save {
+  background-color: var(--brand-navy);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(13, 27, 62, 0.3);
+}
+.btn-save:hover {
+  background-color: var(--brand-navy-dark);
+}
+
+.modal-header-danger {
+  background: #991b1b;
+  border-bottom-color: var(--brand-red);
+}
+
+.btn-danger {
+  background-color: var(--brand-red);
+  color: #ffffff;
+}
+.btn-danger:hover {
+  background-color: var(--brand-red-hover);
+}
+
+/* ==========================================================================
+   Mobile Floating Action Button (FAB)
+   ========================================================================== */
+.fab-new-project {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--brand-red);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 18px var(--brand-red-glow);
+  cursor: pointer;
+  z-index: 90;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fab-new-project:active {
+  transform: scale(0.92);
+}
+
+/* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: var(--brand-navy);
+  color: #ffffff;
+  padding: 0.75rem 1.15rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-success { border-left: 4px solid #10b981; }
+.toast-error { border-left: 4px solid var(--brand-red); }
+.toast-info { border-left: 4px solid #38bdf8; }
+
+/* ==========================================================================
+   Responsive Breakpoints: Tablets & Mobile
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toolbar-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrapper {
+    max-width: 100%;
+  }
+
+  .filter-pills {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0.85rem 1rem;
+    gap: 1rem;
+  }
+
+  .brand-logo-img {
+    height: 36px;
+  }
+
+  .header-actions .btn-print,
+  .header-actions .btn-export-csv,
+  .header-actions .date-display {
+    display: none;
+  }
+
+  .header-actions .btn-new-project {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .main-wrapper {
+    padding: 1rem 1rem 5rem;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .kpi-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .form-grid-2,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .fab-new-project {
+    display: flex;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Mobile Responsive Table Transformation */
+  .projects-table thead {
+    display: none;
+  }
+
+  .projects-table,
+  .projects-table tbody,
+  .projects-table tr,
+  .projects-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .projects-table tbody tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md);
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 0.5rem 0;
+  }
+
+  .projects-table td {
+    padding: 0.65rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .projects-table td:last-child {
+    border-bottom: none;
+  }
+
+  .projects-table td::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .projects-table td.td-dept::before { display: none; }
+  .projects-table td.td-dept {
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding: 0.85rem 1rem;
+  }
+
+  .update-cell {
+    max-width: 100%;
+    text-align: right;
+  }
+}
+
+/* ==========================================================================
+   Print / Export PDF Optimization with YARAMAY Branding
+   ========================================================================== */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .app-header,
+  .toolbar-section,
+  .header-actions,
+  .fab-new-project,
+  .btn-action-icon,
+  .th-actions,
+  .td-actions,
+  .table-footer .footer-meta,
+  .inline-edit-hint {
+    display: none !important;
+  }
+
+  .print-header-cover {
+    display: block !important;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #e01e26;
+  }
+
+  .print-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .print-logo {
+    height: 60px;
+    width: auto;
+  }
+
+  .print-header-cover h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0d1b3e;
+    margin: 0;
+  }
+
+  .print-header-cover p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0.15rem 0 0;
+    letter-spacing: 0.05em;
+  }
+
+  .print-meta-line {
+    font-size: 0.75rem !important;
+    color: #94a3b8 !important;
+    margin-top: 0.75rem !important;
+  }
+
+  .main-wrapper {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .kpi-card {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  .projects-table {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .projects-table thead th {
+    background-color: #0d1b3e !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .projects-table tbody tr.row-delayed-urgent {
+    background-color: #fee2e2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

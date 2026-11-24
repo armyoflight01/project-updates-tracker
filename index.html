@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YARAMAY | Project &amp; Updates Tracker - Computer Maintenance Services</title>
+  <title>Franchise Ready | Project &amp; Updates Tracker - فرنشايز ريدي</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,13 +12,13 @@
 </head>
 <body>
 
-  <!-- Top App Navigation / YARAMAY Executive Header -->
+  <!-- Top App Navigation / Franchise Ready Executive Header -->
   <header class="app-header">
     <div class="header-container">
       <div class="header-brand">
-        <!-- Official YARAMAY Logo Card -->
-        <a href="index.html" class="brand-logo-card" title="YARAMAY Computer Maintenance Services">
-          <img src="assets/logo.png" alt="YARAMAY Computer Maintenance Services Logo" class="brand-logo-img">
+        <!-- Official Franchise Ready Logo Card -->
+        <a href="index.html" class="brand-logo-card" title="Franchise Ready - فرنشايز ريدي السعودية">
+          <img src="assets/logo.png" alt="Franchise Ready Logo" class="brand-logo-img">
         </a>
 
         <div class="header-titles">
@@ -28,7 +28,7 @@
               <span class="live-dot"></span> Live Status
             </span>
           </div>
-          <p class="app-subtitle">YARAMAY Computer Maintenance Services &bull; Executive Operations &amp; Milestone Oversight</p>
+          <p class="app-subtitle">Franchise Ready Saudi Arabia &bull; فرنشايز ريدي &bull; Executive Oversight of Active Initiatives &amp; Milestone Progress</p>
         </div>
       </div>
 
@@ -75,7 +75,7 @@
 
   <!-- Main Container -->
   <main class="main-wrapper">
-    <!-- KPI Metrics Strip with YARAMAY Brand Accents -->
+    <!-- KPI Metrics Strip with Franchise Ready Brand Accents -->
     <section class="kpi-grid">
       <!-- Total Projects -->
       <div class="kpi-card card-total">
@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <!-- Delayed / Urgent (YARAMAY Red Alert) -->
+      <!-- Delayed / Urgent (Franchise Ready Red Alert) -->
       <div class="kpi-card card-delayed">
         <div class="kpi-info">
           <span class="kpi-label">DELAYED / URGENT</span>
@@ -144,7 +144,7 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="searchInput" placeholder="Search project name, client, engineer, or update notes..." autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Search project name, department, manager, or updates..." autocomplete="off">
         <button type="button" class="btn-clear-search" id="btnClearSearch" title="Clear search" style="display: none;">✕</button>
       </div>
 
@@ -164,13 +164,13 @@
             <tr>
               <th scope="col" class="th-dept sortable" data-sort="department">
                 <div class="th-content">
-                  <span>CLIENT / SERVICE DEPT</span>
+                  <span>CLIENT / DEPARTMENT</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
               <th scope="col" class="th-manager sortable" data-sort="manager">
                 <div class="th-content">
-                  <span>LEAD ENGINEER / MANAGER</span>
+                  <span>PROJECT MANAGER</span>
                   <span class="sort-icon">⇅</span>
                 </div>
               </th>
@@ -188,7 +188,7 @@
               </th>
               <th scope="col" class="th-updates">
                 <div class="th-content">
-                  <span>LATEST OPERATIONAL UPDATES</span>
+                  <span>LATEST UPDATES</span>
                 </div>
               </th>
               <th scope="col" class="th-date sortable" data-sort="dueDate">
@@ -201,7 +201,7 @@
             </tr>
           </thead>
           <tbody id="projectsTableBody">
-            <!-- Rendered by JavaScript -->
+            <!-- Rendered dynamically by JavaScript -->
           </tbody>
         </table>
       </div>
@@ -255,7 +255,7 @@
     </svg>
   </button>
 
-  <!-- Modal: Add / Edit Project -->
+  <!-- Modal: Add / Edit Project (Matches Screenshot 1 & 2) -->
   <div class="modal-backdrop" id="projectModal" aria-hidden="true">
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
@@ -284,7 +284,7 @@
             </div>
             <div class="form-group">
               <label for="projectName">PROJECT NAME <span class="required">*</span></label>
-              <input type="text" id="projectName" class="form-control" placeholder="e.g. Workstation Hardware Overhaul" required>
+              <input type="text" id="projectName" class="form-control" placeholder="Enter full project title..." required>
               <small class="field-error" id="errProjectName"></small>
             </div>
           </div>
@@ -292,13 +292,13 @@
           <!-- Row 2: Department & Manager -->
           <div class="form-row form-grid-2">
             <div class="form-group">
-              <label for="clientDepartment">CLIENT / SERVICE DEPT <span class="required">*</span></label>
-              <input type="text" id="clientDepartment" class="form-control" placeholder="e.g. Al-Faisaliah Corp / Hardware Maintenance" required>
+              <label for="clientDepartment">CLIENT / DEPARTMENT <span class="required">*</span></label>
+              <input type="text" id="clientDepartment" class="form-control" placeholder="e.g., Hospitality & Catering Division" required>
               <small class="field-error" id="errClientDepartment"></small>
             </div>
             <div class="form-group">
-              <label for="projectManager">LEAD ENGINEER / MANAGER <span class="required">*</span></label>
-              <input type="text" id="projectManager" class="form-control" placeholder="e.g. Sarah Al-Mansoor" required>
+              <label for="projectManager">PROJECT MANAGER <span class="required">*</span></label>
+              <input type="text" id="projectManager" class="form-control" placeholder="e.g., Sarah Al-Mansoor" required>
               <small class="field-error" id="errProjectManager"></small>
             </div>
           </div>
@@ -337,8 +337,8 @@
 
           <!-- Row 4: Latest Updates -->
           <div class="form-group">
-            <label for="latestUpdates">LATEST OPERATIONAL UPDATES <span class="required">*</span></label>
-            <textarea id="latestUpdates" rows="3" class="form-control" placeholder="Summarize recent technical milestones, hardware repairs, blockers, or next steps..." required></textarea>
+            <label for="latestUpdates">LATEST UPDATES <span class="required">*</span></label>
+            <textarea id="latestUpdates" rows="3" class="form-control" placeholder="Summarize recent milestones, blockers, or next action items..." required></textarea>
             <small class="field-error" id="errLatestUpdates"></small>
           </div>
         </div>
@@ -373,7 +373,7 @@
           <div class="inline-project-info" id="inlineProjectInfo"></div>
           <div class="form-group">
             <label for="inlineUpdateText">LATEST OPERATIONAL UPDATE</label>
-            <textarea id="inlineUpdateText" rows="4" class="form-control" required placeholder="Type operational maintenance update..."></textarea>
+            <textarea id="inlineUpdateText" rows="4" class="form-control" required placeholder="Type operational update..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -405,16 +405,16 @@
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Print Title (Only rendered in printed/PDF version) -->
+  <!-- Print Title (Rendered in printed / PDF version) -->
   <div class="print-header-cover" style="display: none;">
     <div class="print-brand-wrap">
-      <img src="assets/logo.png" alt="YARAMAY Logo" class="print-logo">
+      <img src="assets/logo.png" alt="Franchise Ready Logo" class="print-logo">
       <div>
-        <h2>YARAMAY COMPUTER MAINTENANCE SERVICES</h2>
+        <h2>FRANCHISE READY SAUDI ARABIA &bull; فرنشايز ريدي</h2>
         <p>EXECUTIVE PROJECT &amp; OPERATIONAL UPDATES REPORT</p>
       </div>
     </div>
-    <p class="print-meta-line">Generated on <span id="printDateStamp"></span> &bull; Internal Management System</p>
+    <p class="print-meta-line">Generated on <span id="printDateStamp"></span> &bull; Executive Management Portal</p>
   </div>
 
   <script src="js/app.js"></script>

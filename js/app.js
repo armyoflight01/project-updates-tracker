@@ -1,79 +1,79 @@
 /**
- * YARAMAY Computer Maintenance Services - Executive Tracker Controller
+ * Franchise Ready (فرنشايز ريدي السعودية) - Executive Tracker Controller
  * Full-featured pure JavaScript implementation with LocalStorage persistence,
- * Responsive UI, Print/PDF with YARAMAY Branding, CSV Export, Inline Editing, and Search/Filters.
+ * Responsive UI, Print/PDF with Franchise Ready Branding, CSV Export, Inline Editing, and Search/Filters.
  */
 
 (function () {
   'use strict';
 
-  // Storage Key for YARAMAY Tracker
-  const STORAGE_KEY = 'yaramay_project_tracker_v1';
+  // Storage Key for Franchise Ready Tracker
+  const STORAGE_KEY = 'franchise_ready_tracker_v1';
 
-  // Sample Data tailored for YARAMAY Computer Maintenance Services
+  // Sample Data matching the user's executive project portfolio
   const DEFAULT_SAMPLE_PROJECTS = [
     {
       id: 'PRJ-101',
       code: 'PRJ-101',
-      name: 'Enterprise Workstation & Hardware Overhaul',
-      department: 'Corporate Clients / Hardware Maintenance',
+      name: 'Catering & Hospitality Division Launch',
+      department: 'Business Development',
       manager: 'Khalid Al-Otaibi',
       status: 'In Progress',
       progress: 85,
       dueDate: '2026-12-05',
-      latestUpdates: 'Corporate diagnostic profile and component replacements finalized; finalizing supplier warranty contracts.',
+      latestUpdates: 'Corporate profile and buffet menus finalized; finalizing tableware supplier contracts.',
       updatedAt: '2 hours ago',
       lastModified: new Date(Date.now() - 2 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-102',
       code: 'PRJ-102',
-      name: 'Core Switch & Firewall Security Upgrade',
-      department: 'Events & Exhibitions / IT Infrastructure',
+      name: 'Specialty Coffee Bar & Expo Setup',
+      department: 'Events & Exhibitions',
       manager: 'Sarah Al-Mansoor',
       status: 'Delayed / Urgent',
       progress: 60,
       dueDate: '2026-11-28',
-      latestUpdates: 'Specialty network module shipment delayed at customs; backup local supplier sourced for immediate installation.',
+      latestUpdates: 'Specialty coffee bar equipment shipment delayed at customs; backup local vendor sourced.',
       updatedAt: 'Today, 10:30 AM',
       lastModified: new Date(Date.now() - 4 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-103',
       code: 'PRJ-103',
-      name: 'Annual Preventative Maintenance & IT SLA',
-      department: 'Operations & Logistics / Technical Support',
+      name: 'Hospitality Operations & Logistics Contract',
+      department: 'Operations & Logistics',
       manager: 'Tariq Al-Dossary',
       status: 'Completed',
       progress: 100,
       dueDate: '2026-11-20',
-      latestUpdates: 'Annual maintenance contract signed and full daily technical support commenced with zero network downtime.',
+      latestUpdates: 'Annual contract signed and full daily hospitality operations commenced with zero issues.',
       updatedAt: 'Yesterday',
       lastModified: new Date(Date.now() - 24 * 3600 * 1000).toISOString()
     },
     {
       id: 'PRJ-104',
       code: 'PRJ-104',
-      name: 'Cloud Disaster Recovery & Backup Deployment',
-      department: 'Marketing & Brand / Digital Infrastructure',
+      name: 'Brand Identity & Omni-Channel Campaign',
+      department: 'Marketing & Brand',
       manager: 'Noura Al-Ghamdi',
       status: 'In Progress',
       progress: 45,
       dueDate: '2026-12-15',
-      latestUpdates: 'Automated backup repository established; testing live failover drills across regional data centers.',
+      latestUpdates: 'Brand identity assets completed; social media campaign launched across regional platforms.',
       updatedAt: 'Nov 21, 2026',
       lastModified: new Date('2026-11-21T09:00:00').toISOString()
     },
     {
       id: 'PRJ-105',
       code: 'PRJ-105',
-      name: 'ISO/IEC 27001 Security Audit & Compliance',
-      department: 'Quality & Compliance / IT Standards',
+      name: 'Food Safety & Hygiene Compliance Audit',
+      department: 'Quality & Compliance',
       manager: 'Dr. Faisal Al-Harbi',
       status: 'In Progress',
       progress: 70,
       dueDate: '2026-12-01',
-      latestUpdates: 'Internal workstation compliance inspection completed; external IT certification audit scheduled for next week.',
+      latestUpdates: 'Internal hygiene audit conducted; final ISO certification assessment scheduled for next week.',
       updatedAt: 'Nov 18, 2026',
       lastModified: new Date('2026-11-18T14:30:00').toISOString()
     }
@@ -248,7 +248,7 @@
       });
     }
 
-    // Status change auto-adjust progress (smart adjustment)
+    // Status change auto-adjust progress
     if (el.projectStatus) {
       el.projectStatus.addEventListener('change', (e) => {
         if (e.target.value === 'Completed' && parseInt(el.progressRange.value, 10) < 100) {
@@ -321,11 +321,11 @@
     // Reset Sample Data
     if (el.btnResetData) {
       el.btnResetData.addEventListener('click', () => {
-        if (confirm('Reset tracker to default YARAMAY sample projects?')) {
+        if (confirm('Reset tracker to default Franchise Ready sample projects?')) {
           projects = JSON.parse(JSON.stringify(DEFAULT_SAMPLE_PROJECTS));
           saveProjects();
           render();
-          showToast('YARAMAY projects restored successfully', 'info');
+          showToast('Franchise Ready sample projects restored', 'info');
         }
       });
     }
@@ -481,24 +481,22 @@
 
       tr.innerHTML = `
         <!-- Client / Department -->
-        <td class="td-dept" data-label="CLIENT / SERVICE DEPT">
+        <td class="td-dept" data-label="CLIENT / DEPARTMENT">
           <div class="dept-cell">
-            <div class="dept-icon-box" title="Service Maintenance Division">
+            <div class="dept-icon-box" title="Department">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
               </svg>
             </div>
             <div class="dept-info">
-              <span class="dept-name">${escapeHTML(project.department || 'General IT Services')}</span>
+              <span class="dept-name">${escapeHTML(project.department || 'General')}</span>
               <span class="dept-project-code">${escapeHTML(project.code || '')} &bull; ${escapeHTML(project.name || '')}</span>
             </div>
           </div>
         </td>
 
-        <!-- Lead Engineer / Project Manager -->
-        <td data-label="LEAD ENGINEER / MANAGER">
+        <!-- Project Manager -->
+        <td data-label="PROJECT MANAGER">
           <div class="manager-cell">
             <div class="manager-avatar ${avatarClass}" title="${escapeHTML(project.manager || '')}">
               ${escapeHTML(initial)}
@@ -527,9 +525,9 @@
           </div>
         </td>
 
-        <!-- Latest Operational Updates (Click directly to edit inline) -->
-        <td data-label="LATEST OPERATIONAL UPDATES">
-          <div class="update-cell" data-id="${project.id}" title="Click to edit maintenance update">
+        <!-- Latest Updates (Click directly to edit inline) -->
+        <td data-label="LATEST UPDATES">
+          <div class="update-cell" data-id="${project.id}" title="Click to edit update inline">
             <div class="update-text">${escapeHTML(project.latestUpdates || 'No operational update logged yet.')}</div>
             <div class="update-meta">
               <span>🕒 Updated: ${escapeHTML(project.updatedAt || 'Recently')}</span>
@@ -686,7 +684,7 @@
       hasError = true;
     }
     if (!manager) {
-      showFieldError('errProjectManager', 'Engineer/Manager is required');
+      showFieldError('errProjectManager', 'Project manager is required');
       hasError = true;
     }
     if (!dueDate) {
@@ -694,7 +692,7 @@
       hasError = true;
     }
     if (!updates) {
-      showFieldError('errLatestUpdates', 'Operational updates summary is required');
+      showFieldError('errLatestUpdates', 'Latest updates summary is required');
       hasError = true;
     }
 
@@ -765,7 +763,7 @@
     el.inlineProjectId.value = project.id;
     el.inlineProjectInfo.innerHTML = `
       <strong>${escapeHTML(project.code)}</strong>: ${escapeHTML(project.name)}<br>
-      <span class="text-muted" style="font-size: 0.8rem;">${escapeHTML(project.department)} &bull; Lead: ${escapeHTML(project.manager)}</span>
+      <span class="text-muted" style="font-size: 0.8rem;">${escapeHTML(project.department)} &bull; Manager: ${escapeHTML(project.manager)}</span>
     `;
     el.inlineUpdateText.value = project.latestUpdates || '';
     el.inlineEditModal.classList.add('show');
@@ -789,7 +787,7 @@
       project.lastModified = new Date().toISOString();
       saveProjects();
       render();
-      showToast(`Operational update for ${project.code} saved`, 'success');
+      showToast(`Latest update for ${project.code} saved`, 'success');
     }
     closeInlineModal();
   }
@@ -832,7 +830,7 @@
       return;
     }
 
-    const headers = ['Project Code', 'Project Name', 'Client/Department', 'Lead Engineer/Manager', 'Status', 'Progress %', 'Due Date', 'Latest Operational Updates', 'Last Updated'];
+    const headers = ['Project Code', 'Project Name', 'Client/Department', 'Project Manager', 'Status', 'Progress %', 'Due Date', 'Latest Updates', 'Last Updated'];
     const rows = projects.map(p => [
       `"${(p.code || '').replace(/"/g, '""')}"`,
       `"${(p.name || '').replace(/"/g, '""')}"`,
@@ -849,12 +847,12 @@
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `YARAMAY_Projects_Report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `Franchise_Ready_Projects_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    showToast('YARAMAY tracker data exported to CSV', 'success');
+    showToast('Franchise Ready data exported to CSV', 'success');
   }
 
   /**

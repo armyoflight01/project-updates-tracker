@@ -1,6 +1,6 @@
 /* ==========================================================================
-   YARAMAY Computer Maintenance Services - Executive Tracker Stylesheet
-   Corporate Identity: Deep Midnight Navy (#0d1b3e) & Signature Scarlet Red (#e01e26)
+   Franchise Ready (فرنشايز ريدي السعودية) - Executive Tracker Stylesheet
+   Corporate Identity: Royal Blue (#3654a4), Deep Navy (#1a326b) & Scarlet Red (#ec173a)
    Responsive (Mobile, Tablet, Desktop) & Print/PDF Optimized
    ========================================================================== */
 
@@ -8,23 +8,23 @@
   --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* YARAMAY Official Brand Palette */
-  --brand-navy: #0d1b3e;          /* Navy from the "M" */
-  --brand-navy-dark: #071026;
-  --brand-navy-secondary: #172a56;
-  --brand-navy-light: #233b74;
+  /* Franchise Ready Official Brand Palette */
+  --brand-navy: #1a326b;          /* Corporate Royal Navy */
+  --brand-navy-dark: #102149;
+  --brand-blue: #3654a4;          /* "Franchise" & "F" Blue */
+  --brand-blue-light: #5274cc;
 
-  --brand-red: #e01e26;           /* Crimson from the "Y" */
-  --brand-red-hover: #c4141c;
+  --brand-red: #ec173a;           /* "Ready" & "R" Scarlet Red */
+  --brand-red-hover: #d31031;
   --brand-red-subtle: #fee2e2;
-  --brand-red-glow: rgba(224, 30, 38, 0.32);
+  --brand-red-glow: rgba(236, 23, 58, 0.32);
 
   /* Neutrals & Layout */
   --body-bg: #f3f6fa;
   --surface: #ffffff;
   --surface-hover: #f8fafc;
   --surface-border: #e2e8f0;
-  --surface-shadow: 0 4px 16px -2px rgba(13, 27, 62, 0.06), 0 2px 6px -2px rgba(13, 27, 62, 0.03);
+  --surface-shadow: 0 4px 16px -2px rgba(26, 50, 107, 0.06), 0 2px 6px -2px rgba(26, 50, 107, 0.03);
 
   --text-main: #0f172a;
   --text-secondary: #334155;
@@ -38,15 +38,15 @@
   --status-inprogress-bar: #0284c7;
 
   --status-delayed-bg: #fee2e2;
-  --status-delayed-text: #e01e26;
-  --status-delayed-dot: #e01e26;
-  --status-delayed-bar: #e01e26;
+  --status-delayed-text: #ec173a;
+  --status-delayed-dot: #ec173a;
+  --status-delayed-bar: #ec173a;
   --status-delayed-row: #fff5f5;
 
-  --status-completed-bg: #0d1b3e;
+  --status-completed-bg: #1a326b;
   --status-completed-text: #ffffff;
   --status-completed-dot: #38bdf8;
-  --status-completed-bar: #0d1b3e;
+  --status-completed-bar: #1a326b;
 
   /* Design Constants */
   --radius-sm: 6px;
@@ -75,13 +75,13 @@ body {
 }
 
 /* ==========================================================================
-   Header: YARAMAY Executive Midnight Bar with Red Accent
+   Header: Franchise Ready Executive Royal Navy Bar with Red Accent
    ========================================================================== */
 .app-header {
-  background: linear-gradient(180deg, #0e1e44 0%, #091533 100%);
+  background: linear-gradient(180deg, #1b326d 0%, #10214a 100%);
   color: #ffffff;
   border-bottom: 4px solid var(--brand-red);
-  box-shadow: 0 4px 20px rgba(7, 16, 38, 0.35);
+  box-shadow: 0 4px 20px rgba(16, 33, 74, 0.35);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -104,16 +104,16 @@ body {
   gap: 1.15rem;
 }
 
-/* YARAMAY Logo Presentation Card */
+/* Franchise Ready Logo Presentation Card */
 .brand-logo-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
-  padding: 0.35rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   border-radius: var(--radius-md);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.8);
   transition: var(--transition);
   text-decoration: none;
   cursor: pointer;
@@ -121,12 +121,12 @@ body {
 
 .brand-logo-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(224, 30, 38, 0.25);
+  box-shadow: 0 6px 16px rgba(236, 23, 58, 0.3);
   border-color: var(--brand-red);
 }
 
 .brand-logo-img {
-  height: 44px;
+  height: 46px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -183,7 +183,7 @@ body {
 
 .app-subtitle {
   font-size: 0.82rem;
-  color: #a5b9e0;
+  color: #b5c7f0;
   font-weight: 500;
 }
 
@@ -198,8 +198,8 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.55rem 0.95rem;
   border-radius: var(--radius-md);
   font-size: 0.84rem;
@@ -232,11 +232,11 @@ body {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.28);
 }
 
-/* Signature YARAMAY Red Primary Button */
+/* Franchise Ready Red Primary Button */
 .btn-primary.btn-new-project {
   background-color: var(--brand-red);
   color: #ffffff;
@@ -246,7 +246,7 @@ body {
 .btn-primary.btn-new-project:hover {
   background-color: var(--brand-red-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(224, 30, 38, 0.45);
+  box-shadow: 0 6px 18px rgba(236, 23, 58, 0.45);
 }
 
 /* ==========================================================================
@@ -263,7 +263,7 @@ body {
 }
 
 /* ==========================================================================
-   KPI Metrics Grid with YARAMAY Accents
+   KPI Metrics Grid with Franchise Ready Accents
    ========================================================================== */
 .kpi-grid {
   display: grid;
@@ -287,7 +287,7 @@ body {
 
 .kpi-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -4px rgba(13, 27, 62, 0.1);
+  box-shadow: 0 10px 24px -4px rgba(26, 50, 107, 0.1);
 }
 
 .kpi-info {
@@ -334,7 +334,7 @@ body {
   color: #0284c7;
 }
 
-/* Delayed / Urgent Card (YARAMAY Red) */
+/* Delayed / Urgent Card (Franchise Ready Red) */
 .card-delayed {
   border-left: 4.5px solid var(--brand-red);
 }
@@ -346,7 +346,7 @@ body {
   color: var(--brand-red);
 }
 
-/* Completed Card (YARAMAY Navy) */
+/* Completed Card (Franchise Ready Navy) */
 .card-completed {
   border-left: 4.5px solid var(--brand-navy);
 }
@@ -398,7 +398,7 @@ body {
 
 .search-input-wrapper input:focus {
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(224, 30, 38, 0.12);
+  box-shadow: 0 0 0 3px rgba(236, 23, 58, 0.12);
 }
 
 .btn-clear-search {
@@ -512,7 +512,7 @@ body {
   border: none;
   white-space: nowrap;
   user-select: none;
-  border-bottom: 2px solid var(--brand-red);
+  border-bottom: 2.5px solid var(--brand-red);
 }
 
 .projects-table thead th.sortable {
@@ -521,7 +521,7 @@ body {
 }
 
 .projects-table thead th.sortable:hover {
-  background-color: var(--brand-navy-secondary);
+  background-color: #213d7f;
 }
 
 .th-content {
@@ -566,12 +566,7 @@ body {
 }
 
 .dept-icon-box {
-  color: var(--brand-red);
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -606,7 +601,7 @@ body {
   height: 32px;
   border-radius: 50%;
   background-color: #e0f2fe;
-  color: var(--brand-navy);
+  color: #0369a1;
   font-size: 0.82rem;
   font-weight: 800;
   display: flex;
@@ -617,9 +612,9 @@ body {
 }
 
 .manager-avatar.avatar-s { background-color: #fee2e2; color: var(--brand-red); border-color: #fecaca; }
-.manager-avatar.avatar-t { background-color: #e0e7ff; color: var(--brand-navy); border-color: #c7d2fe; }
+.manager-avatar.avatar-t { background-color: #e0e7ff; color: #4338ca; border-color: #c7d2fe; }
 .manager-avatar.avatar-n { background-color: #fef3c7; color: #b45309; border-color: #fde68a; }
-.manager-avatar.avatar-k { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+.manager-avatar.avatar-k { background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
 
 .manager-name {
   font-weight: 600;
@@ -719,7 +714,7 @@ body {
 }
 
 .update-cell:hover {
-  background-color: rgba(224, 30, 38, 0.06);
+  background-color: rgba(54, 84, 164, 0.08);
 }
 
 .update-text {
@@ -743,7 +738,7 @@ body {
 
 .update-edit-hint {
   font-size: 0.72rem;
-  color: var(--brand-red);
+  color: var(--brand-blue);
   font-weight: 600;
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -798,7 +793,7 @@ body {
 }
 
 .btn-action-edit {
-  color: var(--brand-navy);
+  color: var(--brand-blue);
 }
 .btn-action-edit:hover {
   background-color: #eff6ff;
@@ -852,9 +847,9 @@ body {
 .dot-red { background-color: var(--brand-red); }
 
 .inline-edit-hint {
-  color: var(--brand-red);
+  color: var(--brand-blue);
   font-weight: 600;
-  background: #fef2f2;
+  background: #eff6ff;
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius-sm);
 }
@@ -912,12 +907,12 @@ body {
 }
 
 /* ==========================================================================
-   Modals: YARAMAY Branded Dialogs
+   Modals: Franchise Ready Branded Dialogs (Matches Screenshot 1 & 2)
    ========================================================================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(7, 16, 38, 0.72);
+  background-color: rgba(16, 33, 74, 0.72);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -937,7 +932,7 @@ body {
 .modal-dialog {
   background: var(--surface);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 40px -8px rgba(7, 16, 38, 0.45);
+  box-shadow: 0 20px 40px -8px rgba(16, 33, 74, 0.45);
   width: 100%;
   max-width: 640px;
   overflow: hidden;
@@ -954,9 +949,9 @@ body {
   max-width: 460px;
 }
 
-/* Modal Header: YARAMAY Navy with Red Accent Line */
+/* Modal Header: Franchise Ready Navy with Red Accent Line */
 .modal-header {
-  background: linear-gradient(180deg, #0d1b3e 0%, #071026 100%);
+  background: linear-gradient(180deg, #1b326d 0%, #10214a 100%);
   color: #ffffff;
   padding: 1.15rem 1.5rem;
   display: flex;
@@ -1054,8 +1049,8 @@ body {
 }
 
 .form-control:focus {
-  border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(224, 30, 38, 0.12);
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(54, 84, 164, 0.15);
 }
 
 .form-control.is-invalid {
@@ -1078,14 +1073,14 @@ body {
 }
 
 .progress-badge-val {
-  background-color: #fee2e2;
-  color: var(--brand-red);
+  background-color: #e0f2fe;
+  color: #0369a1;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 800;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
-  border: 1px solid #fecaca;
+  border: 1px solid #bae6fd;
 }
 
 .range-slider-wrapper {
@@ -1108,7 +1103,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--brand-red);
+  background: var(--brand-blue);
   border: 2px solid #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
   cursor: pointer;
@@ -1141,12 +1136,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .btn-save {
-  background-color: var(--brand-navy);
+  background-color: #2563eb;
   color: #ffffff;
-  box-shadow: 0 2px 6px rgba(13, 27, 62, 0.3);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
 }
 .btn-save:hover {
-  background-color: var(--brand-navy-dark);
+  background-color: #1d4ed8;
 }
 
 .modal-header-danger {
@@ -1257,7 +1252,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 
   .brand-logo-img {
-    height: 36px;
+    height: 38px;
   }
 
   .header-actions .btn-print,
@@ -1354,7 +1349,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* ==========================================================================
-   Print / Export PDF Optimization with YARAMAY Branding
+   Print / Export PDF Optimization with Franchise Ready Branding
    ========================================================================== */
 @media print {
   body {
@@ -1378,7 +1373,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     display: block !important;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
-    border-bottom: 3px solid #e01e26;
+    border-bottom: 3px solid #ec173a;
   }
 
   .print-brand-wrap {
@@ -1389,14 +1384,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 
   .print-logo {
-    height: 60px;
+    height: 55px;
     width: auto;
   }
 
   .print-header-cover h2 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
-    color: #0d1b3e;
+    color: #1a326b;
     margin: 0;
   }
 
@@ -1428,7 +1423,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 
   .projects-table thead th {
-    background-color: #0d1b3e !important;
+    background-color: #1a326b !important;
     color: #ffffff !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

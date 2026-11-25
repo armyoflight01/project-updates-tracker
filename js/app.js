@@ -1,6 +1,8 @@
 /**
  * Franchise Ready (فرنشايز ريدي السعودية) - Executive Tracker Controller
  * Fully Bilingual: English (LTR) & Arabic (RTL) with LocalStorage persistence,
+ * User Authentication (Admin & User roles with default credentials: ibraheem01 / 123456789),
+ * Dynamic Client / Department Selection and Creation,
  * Responsive UI (Mobile, Tablet, Desktop), Print/PDF, CSV Export, and Search/Filters.
  */
 
@@ -10,6 +12,40 @@
   // Storage Keys
   const STORAGE_KEY = 'franchise_ready_tracker_v1';
   const LANG_STORAGE_KEY = 'franchise_ready_lang';
+  const USERS_STORAGE_KEY = 'franchise_ready_users_v2';
+  const SESSION_STORAGE_KEY = 'franchise_ready_auth_session';
+  const DEPTS_STORAGE_KEY = 'franchise_ready_departments_v2';
+
+  // Default Users (Admin: ibraheem01 / 123456789)
+  const DEFAULT_USERS = [
+    {
+      id: 'u_1',
+      username: 'ibraheem01',
+      password: '123456789',
+      fullName: 'Ibraheem (Admin)',
+      role: 'admin',
+      createdAt: '2026-11-20'
+    },
+    {
+      id: 'u_2',
+      username: 'user01',
+      password: 'user123',
+      fullName: 'Operations User',
+      role: 'user',
+      createdAt: '2026-11-22'
+    }
+  ];
+
+  // Default Departments
+  const DEFAULT_DEPARTMENTS = [
+    'Business Development',
+    'Events & Exhibitions',
+    'Operations & Logistics',
+    'Marketing & Brand',
+    'Quality & Compliance',
+    'Franchise Operations',
+    'Hospitality & Catering Division'
+  ];
 
   // Translation Dictionaries (English & Arabic)
   const i18n = {
@@ -52,6 +88,8 @@
       phProjectName: 'Enter full project title...',
       lblDepartment: 'CLIENT / DEPARTMENT',
       phDepartment: 'e.g., Hospitality & Catering Division',
+      btnAddDept: 'Add Department',
+      btnSaveDept: 'Add',
       lblManager: 'PROJECT MANAGER',
       phManager: 'e.g., Sarah Al-Mansoor',
       lblStatus: 'STATUS',
@@ -78,6 +116,35 @@
       printPortal: 'Executive Management Portal',
       quickEditHint: '✎ Quick Edit',
       progressText: 'Progress',
+      menuManageUsers: 'Manage Users',
+      menuChangePassword: 'Change Password',
+      menuStandaloneLogin: 'Login Page',
+      linkOpenLoginPage: 'Open Dedicated Login Page →',
+      menuLogout: 'Sign Out',
+      modalLoginTitle: 'Executive Portal Sign In',
+      lblUsername: 'Username',
+      lblPassword: 'Password',
+      lblFullName: 'Full Name',
+      lblRole: 'Role',
+      roleAdmin: 'Admin (Full Control)',
+      roleUser: 'User (Standard Access)',
+      hintDefaultCreds: 'Default Admin Login:',
+      btnContinueGuest: 'Guest View',
+      btnSignIn: 'Sign In',
+      titleChangePassword: 'Change Password / Profile',
+      lblCurrentPassword: 'Current Password',
+      lblNewPassword: 'New Password',
+      lblConfirmPassword: 'Confirm New Password',
+      btnSavePassword: 'Save Password',
+      titleUserManagement: 'User Management & Access Control',
+      headerRegisteredUsers: 'Registered Users',
+      btnAddUser: 'Add New User',
+      titleCreateUser: 'Create New User Account',
+      btnCreateAccount: 'Create User',
+      colUser: 'User',
+      colRole: 'Role',
+      colCreated: 'Created',
+      btnClose: 'Close',
       toastSampleRestored: 'Franchise Ready sample projects restored',
       toastProjectSaved: 'Project saved successfully',
       toastProjectAdded: 'New project added to tracker',
@@ -85,7 +152,14 @@
       toastProjectDeleted: 'Project removed successfully',
       toastUpdateSaved: 'Operational update saved',
       toastCsvExported: 'Franchise Ready data exported to CSV',
-      toastStorageError: 'Storage error: unable to save changes'
+      toastStorageError: 'Storage error: unable to save changes',
+      toastLoginSuccess: 'Welcome back',
+      toastLoginError: 'Invalid username or password',
+      toastPasswordChanged: 'Password updated successfully',
+      toastUserCreated: 'User created successfully',
+      toastUserDeleted: 'User deleted successfully',
+      toastDeptAdded: 'New department added successfully',
+      toastDeptExists: 'Department already exists'
     },
     ar: {
       langToggleText: 'English',
@@ -126,6 +200,8 @@
       phProjectName: 'أدخل العنوان الكامل للمشروع...',
       lblDepartment: 'العميل / القسم',
       phDepartment: 'مثال: قسم الضيافة والتموين',
+      btnAddDept: 'إضافة قسم',
+      btnSaveDept: 'إضافة',
       lblManager: 'مدير المشروع',
       phManager: 'مثال: سارة المنصور',
       lblStatus: 'الحالة',
@@ -152,6 +228,35 @@
       printPortal: 'بوابة الإدارة التنفيذية',
       quickEditHint: '✎ تعديل سريع',
       progressText: 'الإنجاز',
+      menuManageUsers: 'إدارة المستخدمين',
+      menuChangePassword: 'تغيير كلمة المرور',
+      menuStandaloneLogin: 'صفحة تسجيل الدخول',
+      linkOpenLoginPage: 'فتح صفحة تسجيل الدخول المستقلة ←',
+      menuLogout: 'تسجيل الخروج',
+      modalLoginTitle: 'تسجيل الدخول إلى البوابة التنفيذية',
+      lblUsername: 'اسم المستخدم',
+      lblPassword: 'كلمة المرور',
+      lblFullName: 'الاسم الكامل',
+      lblRole: 'الصلاحية',
+      roleAdmin: 'مسؤول (تحكم كامل)',
+      roleUser: 'مستخدم (صلاحيات أساسية)',
+      hintDefaultCreds: 'بيانات تسجيل الدخول الافتراضية:',
+      btnContinueGuest: 'تصفح كزائر',
+      btnSignIn: 'تسجيل الدخول',
+      titleChangePassword: 'تغيير كلمة المرور / الملف الشخصي',
+      lblCurrentPassword: 'كلمة المرور الحالية',
+      lblNewPassword: 'كلمة المرور الجديدة',
+      lblConfirmPassword: 'تأكيد كلمة المرور الجديدة',
+      btnSavePassword: 'حفظ كلمة المرور',
+      titleUserManagement: 'إدارة المستخدمين وصلاحيات الوصول',
+      headerRegisteredUsers: 'المستخدمون المسجلون',
+      btnAddUser: 'إضافة مستخدم جديد',
+      titleCreateUser: 'إنشاء حساب مستخدم جديد',
+      btnCreateAccount: 'إنشاء الحساب',
+      colUser: 'المستخدم',
+      colRole: 'الصلاحية',
+      colCreated: 'تاريخ الإنشاء',
+      btnClose: 'إغلاق',
       toastSampleRestored: 'تمت استعادة مشاريع فرنشايز ريدي التجريبية',
       toastProjectSaved: 'تم حفظ المشروع بنجاح',
       toastProjectAdded: 'تمت إضافة المشروع الجديد بنجاح',
@@ -159,7 +264,14 @@
       toastProjectDeleted: 'تم حذف المشروع بنجاح',
       toastUpdateSaved: 'تم حفظ التحديث التشغيلي',
       toastCsvExported: 'تم تصدير بيانات فرنشايز ريدي إلى ملف CSV',
-      toastStorageError: 'خطأ في التخزين: تعذر حفظ التعديلات'
+      toastStorageError: 'خطأ في التخزين: تعذر حفظ التعديلات',
+      toastLoginSuccess: 'مرحباً بك',
+      toastLoginError: 'اسم المستخدم أو كلمة المرور غير صحيحة',
+      toastPasswordChanged: 'تم تحديث كلمة المرور بنجاح',
+      toastUserCreated: 'تم إنشاء المستخدم بنجاح',
+      toastUserDeleted: 'تم حذف المستخدم بنجاح',
+      toastDeptAdded: 'تمت إضافة القسم الجديد بنجاح',
+      toastDeptExists: 'هذا القسم موجود مسبقاً'
     }
   };
 
@@ -170,8 +282,7 @@
       code: 'PRJ-101',
       name_en: 'Catering & Hospitality Division Launch',
       name_ar: 'إطلاق قطاع الضيافة وخدمات الإعاشة والتموين',
-      department_en: 'Business Development',
-      department_ar: 'تطوير الأعمال',
+      department: 'Business Development',
       manager_en: 'Khalid Al-Otaibi',
       manager_ar: 'خالد العتيبي',
       status: 'In Progress',
@@ -188,8 +299,7 @@
       code: 'PRJ-102',
       name_en: 'Specialty Coffee Bar & Expo Setup',
       name_ar: 'تجهيز ركن القهوة المختصة وجناح المعرض الدولي',
-      department_en: 'Events & Exhibitions',
-      department_ar: 'الفعاليات والمعارض',
+      department: 'Events & Exhibitions',
       manager_en: 'Sarah Al-Mansoor',
       manager_ar: 'سارة المنصور',
       status: 'Delayed / Urgent',
@@ -206,8 +316,7 @@
       code: 'PRJ-103',
       name_en: 'Hospitality Operations & Logistics Contract',
       name_ar: 'عقد العمليات التشغيلية وسلاسل الإمداد اللوجستية',
-      department_en: 'Operations & Logistics',
-      department_ar: 'العمليات واللوجستيات',
+      department: 'Operations & Logistics',
       manager_en: 'Tariq Al-Dossary',
       manager_ar: 'طارق الدوسري',
       status: 'Completed',
@@ -224,8 +333,7 @@
       code: 'PRJ-104',
       name_en: 'Brand Identity & Omni-Channel Campaign',
       name_ar: 'الهوية البصرية والحملة التسويقية متعددة القنوات',
-      department_en: 'Marketing & Brand',
-      department_ar: 'التسويق والعلامة التجارية',
+      department: 'Marketing & Brand',
       manager_en: 'Noura Al-Ghamdi',
       manager_ar: 'نورة الغامدي',
       status: 'In Progress',
@@ -242,8 +350,7 @@
       code: 'PRJ-105',
       name_en: 'Food Safety & Hygiene Compliance Audit',
       name_ar: 'تدقيق السلامة الغذائية ومعايير الامتثال والرقابة',
-      department_en: 'Quality & Compliance',
-      department_ar: 'الجودة والامتثال',
+      department: 'Quality & Compliance',
       manager_en: 'Dr. Faisal Al-Harbi',
       manager_ar: 'د. فيصل الحربي',
       status: 'In Progress',
@@ -259,6 +366,9 @@
 
   // Application State
   let currentLang = 'en';
+  let currentUser = null; // { id, username, fullName, role }
+  let usersList = [];
+  let departmentsList = [];
   let projects = [];
   let currentFilter = 'all';
   let searchQuery = '';
@@ -277,6 +387,18 @@
     btnOpenNewModal: document.getElementById('btnOpenNewModal'),
     fabNewProject: document.getElementById('fabNewProject'),
     printDateStamp: document.getElementById('printDateStamp'),
+
+    // User Session
+    btnUserMenu: document.getElementById('btnUserMenu'),
+    userDropdownMenu: document.getElementById('userDropdownMenu'),
+    userMiniAvatar: document.getElementById('userMiniAvatar'),
+    userNameLabel: document.getElementById('userNameLabel'),
+    userRoleBadge: document.getElementById('userRoleBadge'),
+    dropdownUserFullName: document.getElementById('dropdownUserFullName'),
+    dropdownUserRole: document.getElementById('dropdownUserRole'),
+    btnOpenUserManagement: document.getElementById('btnOpenUserManagement'),
+    btnOpenChangePassword: document.getElementById('btnOpenChangePassword'),
+    btnLogout: document.getElementById('btnLogout'),
 
     // KPIs
     kpiTotal: document.getElementById('kpiTotal'),
@@ -313,7 +435,12 @@
     editProjectId: document.getElementById('editProjectId'),
     projectCode: document.getElementById('projectCode'),
     projectName: document.getElementById('projectName'),
-    clientDepartment: document.getElementById('clientDepartment'),
+    clientDepartmentSelect: document.getElementById('clientDepartmentSelect'),
+    btnToggleAddDept: document.getElementById('btnToggleAddDept'),
+    inlineAddDeptBox: document.getElementById('inlineAddDeptBox'),
+    newDeptInput: document.getElementById('newDeptInput'),
+    btnConfirmAddDept: document.getElementById('btnConfirmAddDept'),
+    btnCancelAddDept: document.getElementById('btnCancelAddDept'),
     projectManager: document.getElementById('projectManager'),
     projectStatus: document.getElementById('projectStatus'),
     dueDate: document.getElementById('dueDate'),
@@ -338,6 +465,40 @@
     btnCancelDelete: document.getElementById('btnCancelDelete'),
     btnConfirmDelete: document.getElementById('btnConfirmDelete'),
 
+    // Login Modal
+    loginModal: document.getElementById('loginModal'),
+    loginForm: document.getElementById('loginForm'),
+    loginUsername: document.getElementById('loginUsername'),
+    loginPassword: document.getElementById('loginPassword'),
+    loginErrorAlert: document.getElementById('loginErrorAlert'),
+    btnCloseLoginModal: document.getElementById('btnCloseLoginModal'),
+    btnGuestLogin: document.getElementById('btnGuestLogin'),
+
+    // Change Password Modal
+    changePasswordModal: document.getElementById('changePasswordModal'),
+    changePasswordForm: document.getElementById('changePasswordForm'),
+    profileUsername: document.getElementById('profileUsername'),
+    profileFullName: document.getElementById('profileFullName'),
+    currentPassword: document.getElementById('currentPassword'),
+    newPassword: document.getElementById('newPassword'),
+    confirmNewPassword: document.getElementById('confirmNewPassword'),
+    btnCloseChangePassModal: document.getElementById('btnCloseChangePassModal'),
+    btnCancelChangePass: document.getElementById('btnCancelChangePass'),
+
+    // User Management Modal
+    userManagementModal: document.getElementById('userManagementModal'),
+    btnCloseUserMgmtModal: document.getElementById('btnCloseUserMgmtModal'),
+    btnCloseUserMgmtBottom: document.getElementById('btnCloseUserMgmtBottom'),
+    btnToggleAddUserForm: document.getElementById('btnToggleAddUserForm'),
+    addUserCard: document.getElementById('addUserCard'),
+    addUserForm: document.getElementById('addUserForm'),
+    newUsername: document.getElementById('newUsername'),
+    newUserFullName: document.getElementById('newUserFullName'),
+    newUserPassword: document.getElementById('newUserPassword'),
+    newUserRole: document.getElementById('newUserRole'),
+    btnCancelAddUser: document.getElementById('btnCancelAddUser'),
+    usersTableBody: document.getElementById('usersTableBody'),
+
     // Toasts
     toastContainer: document.getElementById('toastContainer')
   };
@@ -347,6 +508,8 @@
    */
   function init() {
     initLanguage();
+    initUsersAndAuth();
+    initDepartments();
     loadProjects();
     updateHeaderDate();
     bindEvents();
@@ -362,7 +525,6 @@
     if (saved === 'ar' || saved === 'en') {
       currentLang = saved;
     } else {
-      // Auto-detect browser language if Arabic
       const browserLang = (navigator.language || '').toLowerCase();
       currentLang = browserLang.startsWith('ar') ? 'ar' : 'en';
     }
@@ -384,6 +546,7 @@
 
     applyTranslations();
     updateHeaderDate();
+    updateDepartmentsDropdown();
 
     if (reRender) {
       render();
@@ -404,16 +567,171 @@
     // Placeholders
     if (el.searchInput) el.searchInput.placeholder = t.searchPlaceholder;
     if (el.projectName) el.projectName.placeholder = t.phProjectName;
-    if (el.clientDepartment) el.clientDepartment.placeholder = t.phDepartment;
     if (el.projectManager) el.projectManager.placeholder = t.phManager;
     if (el.latestUpdates) el.latestUpdates.placeholder = t.phUpdates;
     if (el.inlineUpdateText) el.inlineUpdateText.placeholder = t.phInlineUpdate;
+    if (el.newDeptInput) el.newDeptInput.placeholder = currentLang === 'ar' ? 'اكتب اسم القسم الجديد...' : 'Type new department name...';
+
+    updateUserUI();
+  }
+
+  /**
+   * Initialize Users & Auth System
+   */
+  function initUsersAndAuth() {
+    try {
+      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+      if (storedUsers) {
+        usersList = JSON.parse(storedUsers);
+      } else {
+        usersList = JSON.parse(JSON.stringify(DEFAULT_USERS));
+        saveUsers();
+      }
+    } catch (e) {
+      usersList = JSON.parse(JSON.stringify(DEFAULT_USERS));
+    }
+
+    // Load active session or default to admin (ibraheem01)
+    try {
+      const session = localStorage.getItem(SESSION_STORAGE_KEY);
+      if (session) {
+        currentUser = JSON.parse(session);
+        // Sync with usersList in case updated
+        const match = usersList.find(u => u.username === currentUser.username);
+        if (match) {
+          currentUser = {
+            id: match.id,
+            username: match.username,
+            fullName: match.fullName,
+            role: match.role
+          };
+        }
+      } else {
+        // Auto sign-in with default admin account
+        const defaultAdmin = usersList[0];
+        currentUser = {
+          id: defaultAdmin.id,
+          username: defaultAdmin.username,
+          fullName: defaultAdmin.fullName,
+          role: defaultAdmin.role
+        };
+        saveSession();
+      }
+    } catch (e) {
+      currentUser = usersList[0];
+    }
+
+    updateUserUI();
+  }
+
+  function saveUsers() {
+    try {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(usersList));
+    } catch (e) {
+      console.error('Error saving users:', e);
+    }
+  }
+
+  function saveSession() {
+    try {
+      if (currentUser) {
+        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error('Error saving session:', e);
+    }
+  }
+
+  function updateUserUI() {
+    if (!currentUser) {
+      if (el.userNameLabel) el.userNameLabel.textContent = currentLang === 'ar' ? 'دخول' : 'Sign In';
+      if (el.userRoleBadge) el.userRoleBadge.textContent = 'Guest';
+      if (el.userMiniAvatar) el.userMiniAvatar.textContent = '?';
+      if (el.btnOpenUserManagement) el.btnOpenUserManagement.style.display = 'none';
+      if (el.btnOpenChangePassword) el.btnOpenChangePassword.style.display = 'none';
+      return;
+    }
+
+    const initial = currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : 'U';
+    if (el.userMiniAvatar) el.userMiniAvatar.textContent = initial;
+    if (el.userNameLabel) el.userNameLabel.textContent = currentUser.username;
+
+    const roleName = currentUser.role === 'admin'
+      ? (currentLang === 'ar' ? 'مسؤول' : 'Admin')
+      : (currentLang === 'ar' ? 'مستخدم' : 'User');
+
+    if (el.userRoleBadge) el.userRoleBadge.textContent = roleName;
+    if (el.dropdownUserFullName) el.dropdownUserFullName.textContent = currentUser.fullName;
+    if (el.dropdownUserRole) el.dropdownUserRole.textContent = currentUser.role === 'admin'
+      ? (currentLang === 'ar' ? 'مسؤول النظام (تحكم كامل)' : 'System Administrator')
+      : (currentLang === 'ar' ? 'مستخدم عادي' : 'Standard User');
+
+    // Only Admin can view User Management
+    if (el.btnOpenUserManagement) {
+      el.btnOpenUserManagement.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+    }
+    if (el.btnOpenChangePassword) {
+      el.btnOpenChangePassword.style.display = 'flex';
+    }
+  }
+
+  /**
+   * Initialize Client / Department Management
+   */
+  function initDepartments() {
+    try {
+      const stored = localStorage.getItem(DEPTS_STORAGE_KEY);
+      if (stored) {
+        departmentsList = JSON.parse(stored);
+      } else {
+        departmentsList = [...DEFAULT_DEPARTMENTS];
+        saveDepartments();
+      }
+    } catch (e) {
+      departmentsList = [...DEFAULT_DEPARTMENTS];
+    }
+    updateDepartmentsDropdown();
+  }
+
+  function saveDepartments() {
+    try {
+      localStorage.setItem(DEPTS_STORAGE_KEY, JSON.stringify(departmentsList));
+    } catch (e) {
+      console.error('Error saving departments:', e);
+    }
+  }
+
+  function updateDepartmentsDropdown(selectedDept = null) {
+    if (!el.clientDepartmentSelect) return;
+    el.clientDepartmentSelect.innerHTML = '';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = currentLang === 'ar' ? '-- اختر القسم أو العميل --' : '-- Select Client / Department --';
+    defaultOption.disabled = true;
+    if (!selectedDept) defaultOption.selected = true;
+    el.clientDepartmentSelect.appendChild(defaultOption);
+
+    departmentsList.forEach(dept => {
+      const opt = document.createElement('option');
+      opt.value = dept;
+      opt.textContent = dept;
+      if (selectedDept && selectedDept.toLowerCase() === dept.toLowerCase()) {
+        opt.selected = true;
+      }
+      el.clientDepartmentSelect.appendChild(opt);
+    });
   }
 
   /**
    * Helper to get localized field from project
    */
   function getProjectField(project, field) {
+    if (field === 'department') {
+      return project.department || '';
+    }
     if (currentLang === 'ar') {
       return project[`${field}_ar`] || project[`${field}_en`] || project[field] || '';
     }
@@ -488,6 +806,119 @@
         const nextLang = currentLang === 'en' ? 'ar' : 'en';
         setLanguage(nextLang, true);
         showToast(nextLang === 'ar' ? 'تم تحويل اللغة إلى العربية' : 'Switched to English', 'info');
+      });
+    }
+
+    // User Profile Dropdown Toggle
+    if (el.btnUserMenu) {
+      el.btnUserMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!currentUser) {
+          openLoginModal();
+          return;
+        }
+        const isOpen = el.userDropdownMenu.style.display === 'block';
+        el.userDropdownMenu.style.display = isOpen ? 'none' : 'block';
+      });
+    }
+
+    // Close user dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (el.userDropdownMenu && !e.target.closest('#userSessionWrap')) {
+        el.userDropdownMenu.style.display = 'none';
+      }
+    });
+
+    // Logout
+    if (el.btnLogout) {
+      el.btnLogout.addEventListener('click', () => {
+        currentUser = null;
+        saveSession();
+        updateUserUI();
+        el.userDropdownMenu.style.display = 'none';
+        showToast(currentLang === 'ar' ? 'تم تسجيل الخروج بنجاح... جاري التحويل' : 'Signed out successfully... Redirecting to login', 'info');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 500);
+      });
+    }
+
+    // Open User Management Modal (Admin)
+    if (el.btnOpenUserManagement) {
+      el.btnOpenUserManagement.addEventListener('click', () => {
+        el.userDropdownMenu.style.display = 'none';
+        openUserManagementModal();
+      });
+    }
+
+    // Open Change Password Modal
+    if (el.btnOpenChangePassword) {
+      el.btnOpenChangePassword.addEventListener('click', () => {
+        el.userDropdownMenu.style.display = 'none';
+        openChangePasswordModal();
+      });
+    }
+
+    // Login Modal Events
+    if (el.btnCloseLoginModal) el.btnCloseLoginModal.addEventListener('click', closeLoginModal);
+    if (el.btnGuestLogin) {
+      el.btnGuestLogin.addEventListener('click', () => {
+        currentUser = null;
+        saveSession();
+        updateUserUI();
+        closeLoginModal();
+        showToast(currentLang === 'ar' ? 'تصفح بوضع الزائر' : 'Browsing in guest mode', 'info');
+      });
+    }
+    if (el.loginForm) el.loginForm.addEventListener('submit', handleLoginSubmit);
+
+    // Change Password Form
+    if (el.btnCloseChangePassModal) el.btnCloseChangePassModal.addEventListener('click', closeChangePasswordModal);
+    if (el.btnCancelChangePass) el.btnCancelChangePass.addEventListener('click', closeChangePasswordModal);
+    if (el.changePasswordForm) el.changePasswordForm.addEventListener('submit', handleChangePasswordSubmit);
+
+    // User Management Modal Events
+    if (el.btnCloseUserMgmtModal) el.btnCloseUserMgmtModal.addEventListener('click', closeUserManagementModal);
+    if (el.btnCloseUserMgmtBottom) el.btnCloseUserMgmtBottom.addEventListener('click', closeUserManagementModal);
+    if (el.btnToggleAddUserForm) {
+      el.btnToggleAddUserForm.addEventListener('click', () => {
+        const isHidden = el.addUserCard.style.display === 'none';
+        el.addUserCard.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) el.newUsername.focus();
+      });
+    }
+    if (el.btnCancelAddUser) {
+      el.btnCancelAddUser.addEventListener('click', () => {
+        el.addUserCard.style.display = 'none';
+      });
+    }
+    if (el.addUserForm) el.addUserForm.addEventListener('submit', handleAddUserSubmit);
+
+    // Department Quick Add Events
+    if (el.btnToggleAddDept) {
+      el.btnToggleAddDept.addEventListener('click', () => {
+        const isHidden = el.inlineAddDeptBox.style.display === 'none';
+        el.inlineAddDeptBox.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden) {
+          el.newDeptInput.value = '';
+          el.newDeptInput.focus();
+        }
+      });
+    }
+    if (el.btnCancelAddDept) {
+      el.btnCancelAddDept.addEventListener('click', () => {
+        el.inlineAddDeptBox.style.display = 'none';
+      });
+    }
+    if (el.btnConfirmAddDept) {
+      el.btnConfirmAddDept.addEventListener('click', handleAddNewDepartment);
+    }
+    if (el.newDeptInput) {
+      el.newDeptInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddNewDepartment();
+        }
       });
     }
 
@@ -630,8 +1061,264 @@
         closeProjectModal();
         closeInlineModal();
         closeDeleteModal();
+        closeLoginModal();
+        closeChangePasswordModal();
+        closeUserManagementModal();
       }
     });
+  }
+
+  /**
+   * Handle Dynamic Addition of Client / Department
+   */
+  function handleAddNewDepartment() {
+    const val = el.newDeptInput.value.trim();
+    if (!val) return;
+
+    // Check duplicate
+    const exists = departmentsList.some(d => d.toLowerCase() === val.toLowerCase());
+    if (exists) {
+      showToast(i18n[currentLang].toastDeptExists, 'error');
+      updateDepartmentsDropdown(val);
+      el.inlineAddDeptBox.style.display = 'none';
+      return;
+    }
+
+    departmentsList.push(val);
+    saveDepartments();
+    updateDepartmentsDropdown(val);
+    el.newDeptInput.value = '';
+    el.inlineAddDeptBox.style.display = 'none';
+    showToast(`${i18n[currentLang].toastDeptAdded}: ${val}`, 'success');
+  }
+
+  /**
+   * Authentication Handlers
+   */
+  function openLoginModal() {
+    el.loginUsername.value = '';
+    el.loginPassword.value = '';
+    el.loginErrorAlert.style.display = 'none';
+    el.loginModal.classList.add('show');
+    el.loginUsername.focus();
+  }
+
+  function closeLoginModal() {
+    el.loginModal.classList.remove('show');
+  }
+
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+    const username = el.loginUsername.value.trim();
+    const password = el.loginPassword.value;
+
+    const matchedUser = usersList.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+
+    if (matchedUser) {
+      currentUser = {
+        id: matchedUser.id,
+        username: matchedUser.username,
+        fullName: matchedUser.fullName,
+        role: matchedUser.role
+      };
+      saveSession();
+      updateUserUI();
+      closeLoginModal();
+      showToast(`${i18n[currentLang].toastLoginSuccess}, ${currentUser.fullName}!`, 'success');
+    } else {
+      el.loginErrorAlert.textContent = i18n[currentLang].toastLoginError;
+      el.loginErrorAlert.style.display = 'block';
+    }
+  }
+
+  /**
+   * Change Password / Profile Handlers
+   */
+  function openChangePasswordModal() {
+    if (!currentUser) return;
+    clearErrors();
+
+    const userRecord = usersList.find(u => u.username === currentUser.username);
+    el.profileUsername.value = currentUser.username;
+    el.profileFullName.value = currentUser.fullName;
+    el.currentPassword.value = '';
+    el.newPassword.value = '';
+    el.confirmNewPassword.value = '';
+
+    el.changePasswordModal.classList.add('show');
+    el.currentPassword.focus();
+  }
+
+  function closeChangePasswordModal() {
+    el.changePasswordModal.classList.remove('show');
+  }
+
+  function handleChangePasswordSubmit(e) {
+    e.preventDefault();
+    clearErrors();
+
+    const newUsername = el.profileUsername.value.trim();
+    const newFullName = el.profileFullName.value.trim();
+    const currentPass = el.currentPassword.value;
+    const newPass = el.newPassword.value;
+    const confirmPass = el.confirmNewPassword.value;
+
+    const userIdx = usersList.findIndex(u => u.username === currentUser.username);
+    if (userIdx === -1) return;
+
+    if (usersList[userIdx].password !== currentPass) {
+      showFieldError('errCurrentPassword', currentLang === 'ar' ? 'كلمة المرور الحالية غير صحيحة' : 'Current password incorrect');
+      return;
+    }
+
+    if (newPass.length < 6) {
+      showFieldError('errNewPassword', currentLang === 'ar' ? 'يجب أن لا تقل كلمة المرور عن 6 خانات' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    if (newPass !== confirmPass) {
+      showFieldError('errConfirmNewPassword', currentLang === 'ar' ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      return;
+    }
+
+    // Check duplicate username if changed
+    if (newUsername.toLowerCase() !== currentUser.username.toLowerCase()) {
+      const exists = usersList.some(u => u.username.toLowerCase() === newUsername.toLowerCase());
+      if (exists) {
+        showFieldError('errProfileUsername', currentLang === 'ar' ? 'اسم المستخدم هذا مستخدم مسبقاً' : 'Username is already taken');
+        return;
+      }
+    }
+
+    // Update record
+    usersList[userIdx].username = newUsername;
+    usersList[userIdx].fullName = newFullName;
+    usersList[userIdx].password = newPass;
+    saveUsers();
+
+    // Update active session
+    currentUser.username = newUsername;
+    currentUser.fullName = newFullName;
+    saveSession();
+    updateUserUI();
+
+    closeChangePasswordModal();
+    showToast(i18n[currentLang].toastPasswordChanged, 'success');
+  }
+
+  /**
+   * User Management Modal Handlers (Admin)
+   */
+  function openUserManagementModal() {
+    if (!currentUser || currentUser.role !== 'admin') {
+      showToast('Admin privilege required', 'error');
+      return;
+    }
+    el.addUserCard.style.display = 'none';
+    renderUsersTable();
+    el.userManagementModal.classList.add('show');
+  }
+
+  function closeUserManagementModal() {
+    el.userManagementModal.classList.remove('show');
+  }
+
+  function renderUsersTable() {
+    if (!el.usersTableBody) return;
+    el.usersTableBody.innerHTML = '';
+
+    usersList.forEach(u => {
+      const tr = document.createElement('tr');
+      const isSelf = currentUser && u.username === currentUser.username;
+      const roleBadgeClass = u.role === 'admin' ? 'role-admin' : 'role-user';
+      const roleLabel = u.role === 'admin' ? (currentLang === 'ar' ? 'مسؤول' : 'Admin') : (currentLang === 'ar' ? 'مستخدم' : 'User');
+
+      tr.innerHTML = `
+        <td>
+          <strong>${escapeHTML(u.fullName)}</strong><br>
+          <small class="text-muted">@${escapeHTML(u.username)}</small>
+        </td>
+        <td>
+          <span class="role-badge ${roleBadgeClass}">${escapeHTML(roleLabel)}</span>
+        </td>
+        <td class="text-muted text-sm">${escapeHTML(u.createdAt || '2026-11-20')}</td>
+        <td class="text-center">
+          ${isSelf ? `<small class="text-muted">(${currentLang === 'ar' ? 'حسابك الحالي' : 'Active Account'})</small>` : `
+            <button type="button" class="btn-action-icon btn-action-delete" data-del-user="${u.id}" title="Delete User">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          `}
+        </td>
+      `;
+
+      const btnDel = tr.querySelector('[data-del-user]');
+      if (btnDel) {
+        btnDel.addEventListener('click', () => {
+          if (confirm(`${currentLang === 'ar' ? 'هل أنت متأكد من حذف المستخدم' : 'Are you sure you want to delete user'} ${u.username}?`)) {
+            usersList = usersList.filter(item => item.id !== u.id);
+            saveUsers();
+            renderUsersTable();
+            showToast(i18n[currentLang].toastUserDeleted, 'info');
+          }
+        });
+      }
+
+      el.usersTableBody.appendChild(tr);
+    });
+  }
+
+  function handleAddUserSubmit(e) {
+    e.preventDefault();
+    clearErrors();
+
+    const username = el.newUsername.value.trim();
+    const fullName = el.newUserFullName.value.trim();
+    const password = el.newUserPassword.value;
+    const role = el.newUserRole.value;
+
+    if (!username) {
+      showFieldError('errNewUsername', currentLang === 'ar' ? 'اسم المستخدم مطلوب' : 'Username is required');
+      return;
+    }
+
+    const exists = usersList.some(u => u.username.toLowerCase() === username.toLowerCase());
+    if (exists) {
+      showFieldError('errNewUsername', currentLang === 'ar' ? 'اسم المستخدم مسجل مسبقاً' : 'Username already exists');
+      return;
+    }
+
+    if (!fullName) {
+      showFieldError('errNewUserFullName', currentLang === 'ar' ? 'الاسم الكامل مطلوب' : 'Full name is required');
+      return;
+    }
+
+    if (password.length < 6) {
+      showFieldError('errNewUserPassword', currentLang === 'ar' ? 'كلمة المرور يجب أن لا تقل عن 6 خانات' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    const newUser = {
+      id: `u_${Date.now()}`,
+      username,
+      fullName,
+      password,
+      role,
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
+    usersList.push(newUser);
+    saveUsers();
+    renderUsersTable();
+
+    el.newUsername.value = '';
+    el.newUserFullName.value = '';
+    el.newUserPassword.value = '';
+    el.addUserCard.style.display = 'none';
+
+    showToast(i18n[currentLang].toastUserCreated, 'success');
   }
 
   /**
@@ -651,8 +1338,7 @@
         const code = (p.code || '').toLowerCase();
         const nameEn = (p.name_en || p.name || '').toLowerCase();
         const nameAr = (p.name_ar || '').toLowerCase();
-        const deptEn = (p.department_en || p.department || '').toLowerCase();
-        const deptAr = (p.department_ar || '').toLowerCase();
+        const dept = (p.department || '').toLowerCase();
         const mgrEn = (p.manager_en || p.manager || '').toLowerCase();
         const mgrAr = (p.manager_ar || '').toLowerCase();
         const upEn = (p.latestUpdates_en || p.latestUpdates || '').toLowerCase();
@@ -663,8 +1349,7 @@
           code.includes(searchQuery) ||
           nameEn.includes(searchQuery) ||
           nameAr.includes(searchQuery) ||
-          deptEn.includes(searchQuery) ||
-          deptAr.includes(searchQuery) ||
+          dept.includes(searchQuery) ||
           mgrEn.includes(searchQuery) ||
           mgrAr.includes(searchQuery) ||
           upEn.includes(searchQuery) ||
@@ -908,7 +1593,11 @@
     el.modalTitle.textContent = t.modalAddTitle;
     el.projectCode.value = generateNextCode();
     el.projectName.value = '';
-    el.clientDepartment.value = '';
+
+    // Reset departments dropdown and hide quick-add box
+    updateDepartmentsDropdown();
+    el.inlineAddDeptBox.style.display = 'none';
+
     el.projectManager.value = '';
     el.projectStatus.value = 'In Progress';
 
@@ -938,7 +1627,16 @@
     el.modalTitle.textContent = `${t.modalEditPrefix}: ${project.code}`;
     el.projectCode.value = project.code || '';
     el.projectName.value = getProjectField(project, 'name');
-    el.clientDepartment.value = getProjectField(project, 'department');
+
+    // Update departments dropdown with existing project department
+    const dept = project.department || '';
+    if (dept && !departmentsList.includes(dept)) {
+      departmentsList.push(dept);
+      saveDepartments();
+    }
+    updateDepartmentsDropdown(dept);
+    el.inlineAddDeptBox.style.display = 'none';
+
     el.projectManager.value = getProjectField(project, 'manager');
     el.projectStatus.value = project.status || 'In Progress';
     el.dueDate.value = project.dueDate || '';
@@ -965,7 +1663,7 @@
 
     const code = el.projectCode.value.trim();
     const name = el.projectName.value.trim();
-    const department = el.clientDepartment.value.trim();
+    const department = el.clientDepartmentSelect.value.trim();
     const manager = el.projectManager.value.trim();
     const status = el.projectStatus.value;
     const dueDate = el.dueDate.value;
@@ -983,7 +1681,7 @@
       hasError = true;
     }
     if (!department) {
-      showFieldError('errClientDepartment', currentLang === 'ar' ? 'القسم أو العميل مطلوب' : 'Department is required');
+      showFieldError('errClientDepartment', currentLang === 'ar' ? 'يرجى اختيار أو إضافة القسم' : 'Please select or add a department');
       hasError = true;
     }
     if (!manager) {
@@ -1011,6 +1709,7 @@
         const updatePayload = {
           ...existing,
           code,
+          department,
           status,
           dueDate,
           progress,
@@ -1019,14 +1718,12 @@
 
         if (currentLang === 'ar') {
           updatePayload.name_ar = name;
-          updatePayload.department_ar = department;
           updatePayload.manager_ar = manager;
           updatePayload.latestUpdates_ar = updates;
           updatePayload.updatedAt_ar = 'الآن';
           if (!updatePayload.name_en) updatePayload.name_en = name;
         } else {
           updatePayload.name_en = name;
-          updatePayload.department_en = department;
           updatePayload.manager_en = manager;
           updatePayload.latestUpdates_en = updates;
           updatePayload.updatedAt_en = 'Just now';
@@ -1043,8 +1740,7 @@
         code,
         name_en: name,
         name_ar: name,
-        department_en: department,
-        department_ar: department,
+        department,
         manager_en: manager,
         manager_ar: manager,
         status,
@@ -1131,8 +1827,8 @@
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
 
-    const pName = getProjectField(project, 'name');
     deleteTargetId = projectId;
+    const pName = getProjectField(project, 'name');
     el.deleteProjectName.textContent = `${project.code} (${pName})`;
     el.deleteConfirmModal.classList.add('show');
   }

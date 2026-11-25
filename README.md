@@ -1,6 +1,35 @@
 # Franchise Ready (فرنشايز ريدي السعودية) - Project & Updates Tracker
 
-An executive-level operational tracker designed for **Franchise Ready Saudi Arabia**. Built with pure **HTML5, CSS3, and Vanilla JavaScript**, featuring full bilingual support (**English & Arabic RTL**), complete brand integration with the official Franchise Ready logo, colors, and 100% responsiveness on mobile, tablet, and desktop.
+An executive-level operational tracker designed for **Franchise Ready Saudi Arabia**. Built with pure **HTML5, CSS3, and Vanilla JavaScript**, featuring full bilingual support (**English & Arabic RTL**), complete brand integration with the official Franchise Ready logo, colors, role-based authentication (**Admin & User**), dynamic client/department management, and 100% responsiveness on mobile, tablet, and desktop.
+
+---
+
+## 🔐 Authentication & Access Control
+
+- **Pre-configured Admin Account**:
+  - **Username**: `ibraheem01`
+  - **Password**: `123456789`
+- **Role Capabilities**:
+  - **Admin (Full Control)**:
+    - Add, edit, and delete projects.
+    - Change admin username & password (Profile / Password Settings).
+    - Access **User Management**: create new users/admins, view registered accounts, and delete users.
+    - Create and manage custom Clients / Departments.
+  - **User (Standard Access)**:
+    - View projects, search, filter, export to CSV, print executive reports, and log operational updates.
+    - Change their own password.
+    - Restricted from modifying user accounts or deleting projects.
+  - **Guest Mode**:
+    - Instant preview without login.
+
+---
+
+## 🏢 Dynamic Client / Department Selection
+
+- **Choose or Add Department**:
+  - In the "Add / Edit Project" modal, the **Client / Department** field features an interactive dropdown of existing departments.
+  - Includes a dedicated **`+ Add Department`** button right next to the label.
+  - Clicking the button opens an inline prompt to type a new department name (e.g. *Digital Transformation*, *Franchise Operations*, *Hospitality*), which is instantly added to the list, selected, and saved to `localStorage`.
 
 ---
 
@@ -12,18 +41,6 @@ An executive-level operational tracker designed for **Franchise Ready Saudi Arab
   - Uses Google's **Cairo** typography for Arabic and **Plus Jakarta Sans** for English.
   - Mirrored table alignments, search bars, KPI indicator borders, and dialogs.
 - **Persistent Language Preference**: Saves your language choice in `localStorage` so the site remains in Arabic or English across page refreshes.
-- **Localized Data**: Real-time translation for all table headers, department names, project titles, status tags, progress percentages, updates notes, modals, validation errors, and print reports.
-
----
-
-## 🎨 Franchise Ready Brand Integration
-
-- **Official Logo**: High-fidelity display of the Franchise Ready emblem (royal blue **F** & scarlet red **R** with arrow monogram), "Franchise Ready", and Arabic subtitle "فرنشايز ريدي السعودية".
-- **Brand Colors**:
-  - **Royal Blue & Deep Navy** (`#3654a4`, `#1a326b`): Headers, active tabs, completed status, primary badges.
-  - **Scarlet Red** (`#ec173a`): Brand accent lines, live status badge, alert cards, primary `+ New Project` button, and progress indicators.
-  - **Pure White & Slate** (`#ffffff`, `#f3f6fa`): Clean high-contrast cards and backgrounds.
-- **Browser Favicon**: Tab icon set directly to the Franchise Ready emblem.
 
 ---
 
@@ -35,7 +52,7 @@ An executive-level operational tracker designed for **Franchise Ready Saudi Arab
    - Live pulsating status badge (`● Live Status / حالة مباشرة`).
 
 2. **Full Project Management (CRUD)**:
-   - **Add Project**: Auto-suggests project code (`PRJ-106`), handles title, client department, project manager, status, due date, live progress slider, and operational updates in both languages.
+   - **Add Project**: Auto-suggests project code (`PRJ-106`), handles title, client department selection/quick-add, project manager, status, due date, live progress slider, and operational updates in both languages.
    - **Edit Project**: Modal with pre-filled project parameters.
    - **Delete Project**: Confirmation modal with safeguards.
    - **Inline Updates Editing**: Click directly on any "Latest Updates" cell in the table to log quick updates without opening the full form.

@@ -33,6 +33,46 @@
       </div>
 
       <div class="header-actions">
+        <!-- User Session Pill & Dropdown -->
+        <div class="user-session-wrap" id="userSessionWrap">
+          <button type="button" class="btn btn-user-profile" id="btnUserMenu" aria-expanded="false" title="User Account">
+            <span class="user-avatar-mini" id="userMiniAvatar">A</span>
+            <span class="user-name-label" id="userNameLabel">ibraheem01</span>
+            <span class="user-role-badge" id="userRoleBadge">Admin</span>
+            <span class="dropdown-caret">▾</span>
+          </button>
+
+          <!-- User Account Dropdown Menu -->
+          <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none;">
+            <div class="dropdown-header">
+              <strong id="dropdownUserFullName">Ibraheem Al-Dosari</strong>
+              <small class="text-muted" id="dropdownUserRole">System Administrator</small>
+            </div>
+            <div class="dropdown-divider"></div>
+            <!-- Admin only: Manage Users -->
+            <button type="button" class="dropdown-item" id="btnOpenUserManagement">
+              <span class="dropdown-icon">👥</span>
+              <span data-i18n="menuManageUsers">Manage Users</span>
+            </button>
+            <!-- Change Password -->
+            <button type="button" class="dropdown-item" id="btnOpenChangePassword">
+              <span class="dropdown-icon">🔑</span>
+              <span data-i18n="menuChangePassword">Change Password</span>
+            </button>
+            <!-- Standalone Login Page -->
+            <a href="login.html" class="dropdown-item">
+              <span class="dropdown-icon">🖥️</span>
+              <span data-i18n="menuStandaloneLogin">Login Page</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <!-- Logout -->
+            <button type="button" class="dropdown-item text-danger" id="btnLogout">
+              <span class="dropdown-icon">🚪</span>
+              <span data-i18n="menuLogout">Sign Out</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Bilingual Language Switcher (EN / العربية) -->
         <button type="button" class="btn btn-lang-switch" id="btnLangToggle" title="Switch Language / تغيير اللغة">
           <svg class="lang-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -276,7 +316,7 @@
     </svg>
   </button>
 
-  <!-- Modal: Add / Edit Project (Matches Screenshot 1 & 2) -->
+  <!-- Modal: Add / Edit Project (Matches Screenshot 1 & 2 + Dynamic Department Choose/Add) -->
   <div class="modal-backdrop" id="projectModal" aria-hidden="true">
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
@@ -310,13 +350,35 @@
             </div>
           </div>
 
-          <!-- Row 2: Department & Manager -->
+          <!-- Row 2: Department (Choose or Add) & Manager -->
           <div class="form-row form-grid-2">
+            <!-- Client / Department with Choose Dropdown & "+ Add New" button -->
             <div class="form-group">
-              <label for="clientDepartment"><span data-i18n="lblDepartment">CLIENT / DEPARTMENT</span> <span class="required">*</span></label>
-              <input type="text" id="clientDepartment" class="form-control" placeholder="e.g., Hospitality & Catering Division" required>
+              <div class="dept-label-row">
+                <label for="clientDepartmentSelect"><span data-i18n="lblDepartment">CLIENT / DEPARTMENT</span> <span class="required">*</span></label>
+                <button type="button" class="btn-text-action btn-add-dept-pill" id="btnToggleAddDept" title="Add a new Client / Department">
+                  <span class="plus-icon">+</span> <span data-i18n="btnAddDept">Add Department</span>
+                </button>
+              </div>
+
+              <!-- Department Selection Dropdown -->
+              <div class="select-wrapper">
+                <select id="clientDepartmentSelect" class="form-control" required>
+                  <!-- Populated dynamically via JS -->
+                </select>
+              </div>
+
+              <!-- Quick-Add New Department Box (Slides open when button clicked) -->
+              <div class="inline-add-dept-box" id="inlineAddDeptBox" style="display: none;">
+                <input type="text" id="newDeptInput" class="form-control" placeholder="Type new department name...">
+                <div class="add-dept-actions">
+                  <button type="button" class="btn btn-sm btn-save" id="btnConfirmAddDept" data-i18n="btnSaveDept">Add</button>
+                  <button type="button" class="btn btn-sm btn-cancel" id="btnCancelAddDept" data-i18n="btnCancel">Cancel</button>
+                </div>
+              </div>
               <small class="field-error" id="errClientDepartment"></small>
             </div>
+
             <div class="form-group">
               <label for="projectManager"><span data-i18n="lblManager">PROJECT MANAGER</span> <span class="required">*</span></label>
               <input type="text" id="projectManager" class="form-control" placeholder="e.g., Sarah Al-Mansoor" required>
@@ -419,6 +481,182 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-cancel" id="btnCancelDelete" data-i18n="btnCancel">Cancel</button>
         <button type="button" class="btn btn-danger" id="btnConfirmDelete" data-i18n="btnConfirmDelete">Delete Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       AUTHENTICATION & USER MANAGEMENT MODALS
+       ========================================================================= -->
+
+  <!-- Modal: Login / Sign In -->
+  <div class="modal-backdrop" id="loginModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <img src="assets/logo.png" alt="Logo" class="login-modal-logo">
+          <h2 class="modal-title" data-i18n="modalLoginTitle">Executive Portal Sign In</h2>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseLoginModal">✕</button>
+      </div>
+      <form id="loginForm" novalidate>
+        <div class="modal-body">
+          <div class="login-alert alert-danger" id="loginErrorAlert" style="display: none;"></div>
+
+          <div class="form-group">
+            <label for="loginUsername"><span data-i18n="lblUsername">Username</span> <span class="required">*</span></label>
+            <input type="text" id="loginUsername" class="form-control" placeholder="e.g. ibraheem01" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword"><span data-i18n="lblPassword">Password</span> <span class="required">*</span></label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="•••••••••" required autocomplete="current-password">
+          </div>
+
+          <!-- Credentials hint for user -->
+          <div class="login-credentials-hint">
+            <span class="hint-title" data-i18n="hintDefaultCreds">Default Admin Login:</span>
+            <code>ibraheem01</code> / <code>123456789</code>
+          </div>
+
+          <div style="text-align: center; margin-top: 12px;">
+            <a href="login.html" class="link-open-standalone" data-i18n="linkOpenLoginPage" style="color: var(--primary-blue); font-size: 0.85rem; font-weight: 600; text-decoration: none;">Open Dedicated Login Page &rarr;</a>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="btnGuestLogin" data-i18n="btnContinueGuest">Guest View</button>
+          <button type="submit" class="btn btn-primary btn-new-project" data-i18n="btnSignIn">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Change Password / Profile Settings -->
+  <div class="modal-backdrop" id="changePasswordModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h2 class="modal-title" data-i18n="titleChangePassword">Change Password / Profile</h2>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseChangePassModal">✕</button>
+      </div>
+      <form id="changePasswordForm" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="profileUsername" data-i18n="lblUsername">Username</label>
+            <input type="text" id="profileUsername" class="form-control" required>
+            <small class="field-error" id="errProfileUsername"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="profileFullName" data-i18n="lblFullName">Full Name</label>
+            <input type="text" id="profileFullName" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="currentPassword"><span data-i18n="lblCurrentPassword">Current Password</span> <span class="required">*</span></label>
+            <input type="password" id="currentPassword" class="form-control" required>
+            <small class="field-error" id="errCurrentPassword"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword"><span data-i18n="lblNewPassword">New Password</span> <span class="required">*</span></label>
+            <input type="password" id="newPassword" class="form-control" required minlength="6">
+            <small class="field-error" id="errNewPassword"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmNewPassword"><span data-i18n="lblConfirmPassword">Confirm New Password</span> <span class="required">*</span></label>
+            <input type="password" id="confirmNewPassword" class="form-control" required>
+            <small class="field-error" id="errConfirmNewPassword"></small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="btnCancelChangePass" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="btn btn-save" data-i18n="btnSavePassword">Save Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: User Management (Admin Only) -->
+  <div class="modal-backdrop" id="userManagementModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" style="max-width: 720px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h2 class="modal-title" data-i18n="titleUserManagement">User Management &amp; Access Control</h2>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseUserMgmtModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Add New User Form / Toggle -->
+        <div class="user-mgmt-top">
+          <h3 data-i18n="headerRegisteredUsers">Registered Users</h3>
+          <button type="button" class="btn btn-sm btn-primary" id="btnToggleAddUserForm">
+            <span class="plus-icon">+</span> <span data-i18n="btnAddUser">Add New User</span>
+          </button>
+        </div>
+
+        <!-- Hidden Add User Collapsible Form -->
+        <div class="add-user-card" id="addUserCard" style="display: none;">
+          <h4 data-i18n="titleCreateUser">Create New User Account</h4>
+          <form id="addUserForm" novalidate>
+            <div class="form-row form-grid-2">
+              <div class="form-group">
+                <label for="newUsername"><span data-i18n="lblUsername">Username</span> <span class="required">*</span></label>
+                <input type="text" id="newUsername" class="form-control" placeholder="e.g., faisal02" required>
+                <small class="field-error" id="errNewUsername"></small>
+              </div>
+              <div class="form-group">
+                <label for="newUserFullName"><span data-i18n="lblFullName">Full Name</span> <span class="required">*</span></label>
+                <input type="text" id="newUserFullName" class="form-control" placeholder="e.g., Faisal Al-Harbi" required>
+                <small class="field-error" id="errNewUserFullName"></small>
+              </div>
+            </div>
+
+            <div class="form-row form-grid-2">
+              <div class="form-group">
+                <label for="newUserPassword"><span data-i18n="lblPassword">Password</span> <span class="required">*</span></label>
+                <input type="password" id="newUserPassword" class="form-control" placeholder="••••••••" required minlength="6">
+                <small class="field-error" id="errNewUserPassword"></small>
+              </div>
+              <div class="form-group">
+                <label for="newUserRole"><span data-i18n="lblRole">Role</span> <span class="required">*</span></label>
+                <select id="newUserRole" class="form-control" required>
+                  <option value="user" data-i18n="roleUser">User (Standard Access)</option>
+                  <option value="admin" data-i18n="roleAdmin">Admin (Full Control)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="add-user-btn-row">
+              <button type="button" class="btn btn-sm btn-cancel" id="btnCancelAddUser" data-i18n="btnCancel">Cancel</button>
+              <button type="submit" class="btn btn-sm btn-save" data-i18n="btnCreateAccount">Create User</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-responsive">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th data-i18n="colUser">User</th>
+                <th data-i18n="colRole">Role</th>
+                <th data-i18n="colCreated">Created</th>
+                <th class="text-center" data-i18n="colActions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCloseUserMgmtBottom" data-i18n="btnClose">Close</button>
       </div>
     </div>
   </div>

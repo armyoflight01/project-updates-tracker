@@ -1,87 +1,125 @@
 # Franchise Ready (فرنشايز ريدي السعودية) - Project & Updates Tracker
 
-An executive-level operational tracker designed for **Franchise Ready Saudi Arabia**. Built with pure **HTML5, CSS3, and Vanilla JavaScript**, featuring full bilingual support (**English & Arabic RTL**), complete brand integration with the official Franchise Ready logo, colors, role-based authentication (**Admin & User**), dynamic client/department management, and 100% responsiveness on mobile, tablet, and desktop.
+An enterprise executive operational tracker designed for **Franchise Ready Saudi Arabia**. Built with a **Secure PHP / MySQL (PDO) Enterprise Backend** and responsive **HTML5, CSS3, and JavaScript Frontend**, featuring full bilingual support (**English & Arabic RTL**), official Franchise Ready branding, role-based authentication (**Admin & User**), dynamic client/department management, audit trail logging, and brute-force security defense.
 
 ---
 
-## 🔐 Authentication & Access Control
+## 🗄️ Database & XAMPP Setup (2 Easy Options)
 
-- **Pre-configured Admin Account**:
-  - **Username**: `ibraheem01`
-  - **Password**: `123456789`
-- **Role Capabilities**:
-  - **Admin (Full Control)**:
-    - Add, edit, and delete projects.
-    - Change admin username & password (Profile / Password Settings).
-    - Access **User Management**: create new users/admins, view registered accounts, and delete users.
-    - Create and manage custom Clients / Departments.
-  - **User (Standard Access)**:
-    - View projects, search, filter, export to CSV, print executive reports, and log operational updates.
-    - Change their own password.
-    - Restricted from modifying user accounts or deleting projects.
-  - **Guest Mode**:
-    - Instant preview without login.
+The application includes real enterprise data and is ready to run directly in your local XAMPP environment.
+
+### Option 1: 1-Click Web Installer (Fastest & Easiest)
+1. Open the **XAMPP Control Panel** and click **Start** for both **Apache** and **MySQL**.
+2. Open your browser and navigate to:
+   ```
+   http://localhost/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/api/install.php
+   ```
+3. Click the **🚀 1-Click Install Database & Real Data** button.
+4. The system will automatically create the database `franchise_ready_tracker`, create all 6 tables, and populate the real sample records!
 
 ---
 
-## 🏢 Dynamic Client / Department Selection
-
-- **Choose or Add Department**:
-  - In the "Add / Edit Project" modal, the **Client / Department** field features an interactive dropdown of existing departments.
-  - Includes a dedicated **`+ Add Department`** button right next to the label.
-  - Clicking the button opens an inline prompt to type a new department name (e.g. *Digital Transformation*, *Franchise Operations*, *Hospitality*), which is instantly added to the list, selected, and saved to `localStorage`.
-
----
-
-## 🌐 Full Bilingual Support (English & Arabic)
-
-- **One-Click Instant Toggle**: Click the **🌐 العربية / English** button in the top navigation bar to toggle between English and Arabic.
-- **RTL & LTR Automatic Layout**:
-  - Automatically switches document direction (`dir="rtl"` vs `dir="ltr"`).
-  - Uses Google's **Cairo** typography for Arabic and **Plus Jakarta Sans** for English.
-  - Mirrored table alignments, search bars, KPI indicator borders, and dialogs.
-- **Persistent Language Preference**: Saves your language choice in `localStorage` so the site remains in Arabic or English across page refreshes.
+### Option 2: Manual Import via phpMyAdmin
+1. Start **Apache** and **MySQL** in XAMPP.
+2. Open phpMyAdmin in your web browser:
+   ```
+   http://localhost/phpmyadmin/
+   ```
+3. Click on the **Import** tab in the top navigation bar.
+4. Click **Choose File** and select:
+   `c:\xampp\htdocs\YARAMAYA-SIDELINE-PROJECT\project&updates-tracker\database.sql`
+5. Click **Import** (or **Go**) at the bottom.
+6. Done! The database `franchise_ready_tracker` will be created with all tables and authentic sample data.
 
 ---
 
-## 🌟 Key Features
+## 🔐 Default Authentication Credentials
 
-1. **Dashboard Overview**:
-   - 4 Dynamic KPI metrics cards (**Total Projects / إجمالي المشاريع**, **In Progress / قيد التنفيذ**, **Delayed / Urgent / متأخر وعاجل**, **Completed / مكتمل**).
-   - Real-time date indicator in localized format.
-   - Live pulsating status badge (`● Live Status / حالة مباشرة`).
+All passwords in the database are secured using **BCRYPT** hashing.
 
-2. **Full Project Management (CRUD)**:
-   - **Add Project**: Auto-suggests project code (`PRJ-106`), handles title, client department selection/quick-add, project manager, status, due date, live progress slider, and operational updates in both languages.
-   - **Edit Project**: Modal with pre-filled project parameters.
-   - **Delete Project**: Confirmation modal with safeguards.
-   - **Inline Updates Editing**: Click directly on any "Latest Updates" cell in the table to log quick updates without opening the full form.
-
-3. **Search, Filter & Sorting**:
-   - **Real-Time Live Search**: Filters across codes, project titles, client departments, managers, and update notes in both English and Arabic.
-   - **Status Tabs**: Filter by *All Projects*, *In Progress*, *Delayed / Urgent*, and *Completed* with live count indicators.
-   - **Column Sorting**: Sort ascending/descending by Due Date, Progress, Manager, or Department.
-
-4. **Zero-Configuration Local Database**:
-   - Built-in persistent browser **LocalStorage**.
-   - No external database (MySQL) or PHP backend required.
-   - "Reset Sample Data / استعادة البيانات التجريبية" button to restore default demo records anytime.
-
-5. **100% Responsive (Mobile, Tablet, Desktop)**:
-   - **Desktop**: Full data table with avatar badges, progress bars, and action icons.
-   - **Tablet**: Adaptive 2-column KPI grid and fluid layout.
-   - **Mobile**: Responsive card view with clear data labels, touch-friendly modals, and a floating **`+` Action Button (FAB)** in the bottom corner (mirrored to the left in RTL mode).
-
-6. **Export & Print**:
-   - **Print / Save as PDF**: Clean executive report print styling (`@media print`) featuring the Franchise Ready corporate letterhead format.
-   - **Export CSV**: Instant one-click spreadsheet download for Excel or Google Sheets in the active language.
+| Role | Full Name | Username | Password |
+|---|---|---|---|
+| **System Administrator** | Ibraheem Al-Dosari | `ibraheem01` | `123456789` |
+| **Project Manager** | Sarah Al-Mansoor | `s.almansoor` | `mansoor@2026` |
+| **Development Lead** | Khalid Al-Otaibi | `k.alotaibi` | `otaibi@2026` |
+| **Operations Lead** | Tariq Al-Dossary | `t.dossary` | `dossary@2026` |
 
 ---
 
-## 🚀 How to Open
+## 🛡️ Enterprise Security Architecture
 
-- **Direct Open**: Double-click [index.html](file:///c:/xampp/htdocs/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/index.html) in your browser.
-- **Via XAMPP**: Start Apache in XAMPP and go to:
-  ```
-  http://localhost/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/
-  ```
+This release incorporates modern security standards to protect sensitive project data and user credentials:
+
+1. **Strong Password Hashing (BCRYPT)**:
+   - Uses PHP's native `password_hash($password, PASSWORD_BCRYPT)` and `password_verify()`.
+   - Cleartext passwords are never stored in the database or logged in history.
+
+2. **Native SQL Injection Prevention**:
+   - 100% of database queries use PDO prepared statements with `PDO::ATTR_EMULATE_PREPARES => false`.
+   - User inputs are strictly parameterized and validated.
+
+3. **Session Hardening & Anti-Fixation**:
+   - `session_regenerate_id(true)` is executed upon every successful sign-in.
+   - Session cookies are protected with `httponly => true` (prevents XSS cookie theft) and `samesite => 'Lax'`.
+   - Inactive sessions automatically expire after 8 hours.
+
+4. **Brute-Force Rate Limiting**:
+   - Monitored via the `login_attempts` table.
+   - Throttles malicious sign-in attempts by locking out an IP address after 5 consecutive failed attempts for 10 minutes.
+
+5. **Server-Side Role-Based Access Control (RBAC)**:
+   - User Management endpoints (`api/users.php`) strictly verify administrator privileges (`requireAdmin()`) on the server side, preventing unauthorized access even if requested directly.
+
+6. **Audit Trail Logging**:
+   - Every sensitive event (logins, logouts, project creations, modifications, deletions, password updates) is logged in the `audit_logs` table with timestamp, IP address, and user agent.
+
+7. **Strict Security HTTP Headers**:
+   - `X-Content-Type-Options: nosniff` (prevents MIME type sniffing)
+   - `X-Frame-Options: SAMEORIGIN` (prevents clickjacking)
+   - `X-XSS-Protection: 1; mode=block`
+   - `Content-Type: application/json; charset=UTF-8`
+
+---
+
+## 📁 Database Schema Overview (`franchise_ready_tracker`)
+
+The database consists of 6 structured tables:
+
+1. **`users`**: Secure user accounts, roles (`admin`, `user`), status (`active`, `suspended`), and last login timestamps.
+2. **`departments`**: Divisions & client departments (e.g. *Business Development*, *Franchise Operations & Logistics*, *Events & Exhibitions*, *Marketing & Brand Identity*, *Quality & Regulatory Compliance*, *Legal & Contract Affairs*).
+3. **`projects`**: Project codes, initiatives, departments, managers, status (`In Progress`, `Delayed / Urgent`, `Completed`), progress percentages, due dates, and latest updates.
+4. **`project_updates`**: Audit history of all status and progress changes per project.
+5. **`audit_logs`**: System-wide compliance and security activity log.
+6. **`login_attempts`**: Security tracking for brute-force rate limiting.
+
+---
+
+## 🌐 Dual Mode: MySQL Backend + Offline Fallback
+
+- **When hosted on XAMPP (`http://localhost/...`)**:
+  - Automatically connects to the PHP REST API and MySQL database.
+  - Displays a green indicator in the header: **`🟢 MySQL Connected`**.
+  - All actions (CRUD, quick update, user management, department addition) persist directly into MySQL.
+
+- **When opened directly offline (`file:///...`)**:
+  - Automatically falls back to browser **LocalStorage** so the application continues to function without crashing.
+  - Displays: **`🟡 LocalStorage Mode`**.
+
+---
+
+## 🚀 Accessing the Application
+
+1. **Main Project & Updates Tracker**:
+   ```
+   http://localhost/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/index.html
+   ```
+
+2. **Executive Standalone Login Portal**:
+   ```
+   http://localhost/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/login.html
+   ```
+
+3. **Database Setup & Diagnostics Tool**:
+   ```
+   http://localhost/YARAMAYA-SIDELINE-PROJECT/project&updates-tracker/api/install.php
+   ```

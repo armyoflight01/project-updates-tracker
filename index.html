@@ -27,6 +27,9 @@
             <span class="live-status-badge">
               <span class="live-dot"></span> <span data-i18n="liveStatus">Live Status</span>
             </span>
+            <a href="api/install.php" target="_blank" class="live-status-badge db-status-badge" id="headerDbBadge" title="MySQL / PHP Backend Diagnostic" style="text-decoration:none; margin-left:6px;">
+              <span class="live-dot" id="headerDbDot" style="background: #10b981;"></span> <span id="headerDbText">MySQL Connected</span>
+            </a>
           </div>
           <p class="app-subtitle" data-i18n="appSubtitle">Franchise Ready Saudi Arabia &bull; فرنشايز ريدي &bull; Executive Oversight of Active Initiatives &amp; Milestone Progress</p>
         </div>
@@ -63,6 +66,11 @@
             <a href="login.html" class="dropdown-item">
               <span class="dropdown-icon">🖥️</span>
               <span data-i18n="menuStandaloneLogin">Login Page</span>
+            </a>
+            <!-- Database Setup / Diagnostics -->
+            <a href="api/install.php" target="_blank" class="dropdown-item">
+              <span class="dropdown-icon">🗄️</span>
+              <span data-i18n="menuDatabaseSetup">Database Setup & Diagnostics</span>
             </a>
             <div class="dropdown-divider"></div>
             <!-- Logout -->
@@ -676,6 +684,7 @@
     <p class="print-meta-line"><span data-i18n="printGen">Generated on</span> <span id="printDateStamp"></span> &bull; <span data-i18n="printPortal">Executive Management Portal</span></p>
   </div>
 
+  <script src="js/api.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

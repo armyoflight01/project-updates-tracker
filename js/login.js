@@ -178,6 +178,11 @@
         el.inputPassword.value = '123456789';
         if (el.loginAlert) el.loginAlert.style.display = 'none';
         showToast(i18n[currentLang].toastAutoFilled, 'info');
+
+        // Automatically unlock any previous rate limits
+        if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+          fetch('api/auth.php?action=unlock').catch(() => {});
+        }
       });
     }
 
@@ -187,7 +192,7 @@
     }
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     const t = i18n[currentLang];
     const username = el.inputUsername.value.trim();
@@ -198,6 +203,46 @@
       return;
     }
 
+    if (el.btnSubmitLogin) {
+      el.btnSubmitLogin.disabled = true;
+      el.btnSubmitLogin.style.opacity = '0.7';
+    }
+
+    // Try PHP / MySQL Backend API first if running over HTTP
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      try {
+        const res = await TrackerAPI.login(username, password);
+        if (res.success && res.data) {
+          const session = {
+            id: res.data.id,
+            username: res.data.username,
+            fullName: res.data.fullName,
+            role: res.data.role
+          };
+          localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+
+          if (el.loginAlert) el.loginAlert.style.display = 'none';
+          showToast(`${t.toastLoginSuccess}, ${res.data.fullName}!`, 'success');
+
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 600);
+          return;
+        } else if (!res.networkError) {
+          // Explicit authentication failure or rate-limit from backend
+          showError(res.message || t.toastLoginError);
+          if (el.btnSubmitLogin) {
+            el.btnSubmitLogin.disabled = false;
+            el.btnSubmitLogin.style.opacity = '1';
+          }
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend login fallback to local:', err);
+      }
+    }
+
+    // Fallback: LocalStorage Authentication (Offline / File mode)
     const matched = usersList.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
 
     if (matched) {
@@ -218,6 +263,11 @@
       }, 700);
     } else {
       showError(t.toastLoginError);
+    }
+
+    if (el.btnSubmitLogin) {
+      el.btnSubmitLogin.disabled = false;
+      el.btnSubmitLogin.style.opacity = '1';
     }
   }
 

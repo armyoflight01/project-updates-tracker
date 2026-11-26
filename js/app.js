@@ -119,6 +119,7 @@
       menuManageUsers: 'Manage Users',
       menuChangePassword: 'Change Password',
       menuStandaloneLogin: 'Login Page',
+      menuDatabaseSetup: 'Database Setup & Diagnostics',
       linkOpenLoginPage: 'Open Dedicated Login Page →',
       menuLogout: 'Sign Out',
       modalLoginTitle: 'Executive Portal Sign In',
@@ -231,6 +232,7 @@
       menuManageUsers: 'إدارة المستخدمين',
       menuChangePassword: 'تغيير كلمة المرور',
       menuStandaloneLogin: 'صفحة تسجيل الدخول',
+      menuDatabaseSetup: 'إعداد قاعدة البيانات والتشخيص',
       linkOpenLoginPage: 'فتح صفحة تسجيل الدخول المستقلة ←',
       menuLogout: 'تسجيل الخروج',
       modalLoginTitle: 'تسجيل الدخول إلى البوابة التنفيذية',
@@ -515,6 +517,103 @@
     bindEvents();
     applyTranslations();
     render();
+    syncWithBackend();
+  }
+
+  function mapDbProjectToModel(row) {
+    return {
+      id: row.project_code || ('PRJ-' + row.id),
+      dbId: row.id,
+      code: row.project_code,
+      name_en: row.project_name,
+      name_ar: row.project_name,
+      department: row.client_department,
+      manager_en: row.project_manager,
+      manager_ar: row.project_manager,
+      status: row.status,
+      progress: parseInt(row.progress, 10) || 0,
+      dueDate: row.due_date,
+      latestUpdates_en: row.latest_updates,
+      latestUpdates_ar: row.latest_updates,
+      updatedAt_en: row.updated_at ? row.updated_at.substring(0, 10) : 'Recent',
+      updatedAt_ar: row.updated_at ? row.updated_at.substring(0, 10) : 'مؤخراً',
+      lastModified: row.updated_at || new Date().toISOString()
+    };
+  }
+
+  async function syncWithBackend() {
+    if (typeof TrackerAPI === 'undefined' || !TrackerAPI.isHttpServer) {
+      updateDbStatusUI(false, 'LocalStorage Mode');
+      return;
+    }
+
+    try {
+      // 1. Verify session with PHP backend
+      const authRes = await TrackerAPI.checkSession();
+      if (authRes.ok && authRes.success && authRes.data) {
+        currentUser = authRes.data;
+        saveSession();
+        updateUserUI();
+      }
+
+      // 2. Fetch live projects from MySQL
+      const projRes = await TrackerAPI.getProjects();
+      if (projRes.ok && projRes.success && projRes.data && Array.isArray(projRes.data.projects)) {
+        if (projRes.data.projects.length > 0) {
+          projects = projRes.data.projects.map(mapDbProjectToModel);
+          saveProjects();
+          render();
+        }
+        updateDbStatusUI(true, 'MySQL Connected');
+      } else {
+        updateDbStatusUI(false, 'MySQL Pending');
+      }
+
+      // 3. Fetch departments from MySQL
+      const deptRes = await TrackerAPI.getDepartments();
+      if (deptRes.ok && deptRes.success && Array.isArray(deptRes.data) && deptRes.data.length > 0) {
+        departmentsList = deptRes.data.map(d => d.name);
+        saveDepartments();
+        populateDepartmentDropdown();
+      }
+
+      // 4. Fetch users from MySQL if Admin
+      if (currentUser && currentUser.role === 'admin') {
+        const usersRes = await TrackerAPI.getUsers();
+        if (usersRes.ok && usersRes.success && Array.isArray(usersRes.data) && usersRes.data.length > 0) {
+          usersList = usersRes.data.map(u => ({
+            id: u.id,
+            username: u.username,
+            fullName: u.full_name,
+            role: u.role,
+            createdAt: u.created_at
+          }));
+          saveUsers();
+          if (el.userManagementModal && el.userManagementModal.classList.contains('show')) {
+            renderUsersTable();
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Backend sync fallback to LocalStorage:', err);
+      updateDbStatusUI(false, 'Offline Mode');
+    }
+  }
+
+  function updateDbStatusUI(isConnected, text) {
+    const badge = document.getElementById('headerDbBadge');
+    const dot = document.getElementById('headerDbDot');
+    const label = document.getElementById('headerDbText');
+    if (!badge || !dot || !label) return;
+
+    badge.style.display = 'inline-flex';
+    if (isConnected) {
+      dot.style.background = '#10b981';
+      label.textContent = currentLang === 'ar' ? 'قاعدة بيانات MySQL متصلة' : text || 'MySQL Connected';
+    } else {
+      dot.style.background = '#f59e0b';
+      label.textContent = currentLang === 'ar' ? 'وضع محلي (تخزين المتصفح)' : text || 'LocalStorage Mode';
+    }
   }
 
   /**
@@ -1090,6 +1189,10 @@
     el.newDeptInput.value = '';
     el.inlineAddDeptBox.style.display = 'none';
     showToast(`${i18n[currentLang].toastDeptAdded}: ${val}`, 'success');
+
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      TrackerAPI.addDepartment(val).catch(e => console.warn('API addDept err:', e));
+    }
   }
 
   /**
@@ -1107,10 +1210,42 @@
     el.loginModal.classList.remove('show');
   }
 
-  function handleLoginSubmit(e) {
+  async function handleLoginSubmit(e) {
     e.preventDefault();
     const username = el.loginUsername.value.trim();
     const password = el.loginPassword.value;
+
+    if (!username || !password) {
+      el.loginErrorAlert.textContent = i18n[currentLang].toastLoginError;
+      el.loginErrorAlert.style.display = 'block';
+      return;
+    }
+
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      try {
+        const res = await TrackerAPI.login(username, password);
+        if (res.success && res.data) {
+          currentUser = {
+            id: res.data.id,
+            username: res.data.username,
+            fullName: res.data.fullName,
+            role: res.data.role
+          };
+          saveSession();
+          updateUserUI();
+          closeLoginModal();
+          showToast(`${i18n[currentLang].toastLoginSuccess}, ${currentUser.fullName}!`, 'success');
+          syncWithBackend();
+          return;
+        } else if (!res.networkError) {
+          el.loginErrorAlert.textContent = res.message || i18n[currentLang].toastLoginError;
+          el.loginErrorAlert.style.display = 'block';
+          return;
+        }
+      } catch (err) {
+        console.warn('API login fallback:', err);
+      }
+    }
 
     const matchedUser = usersList.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
 
@@ -1153,7 +1288,7 @@
     el.changePasswordModal.classList.remove('show');
   }
 
-  function handleChangePasswordSubmit(e) {
+  async function handleChangePasswordSubmit(e) {
     e.preventDefault();
     clearErrors();
 
@@ -1163,11 +1298,8 @@
     const newPass = el.newPassword.value;
     const confirmPass = el.confirmNewPassword.value;
 
-    const userIdx = usersList.findIndex(u => u.username === currentUser.username);
-    if (userIdx === -1) return;
-
-    if (usersList[userIdx].password !== currentPass) {
-      showFieldError('errCurrentPassword', currentLang === 'ar' ? 'كلمة المرور الحالية غير صحيحة' : 'Current password incorrect');
+    if (!currentPass) {
+      showFieldError('errCurrentPassword', currentLang === 'ar' ? 'كلمة المرور الحالية مطلوبة' : 'Current password is required');
       return;
     }
 
@@ -1181,22 +1313,57 @@
       return;
     }
 
-    // Check duplicate username if changed
-    if (newUsername.toLowerCase() !== currentUser.username.toLowerCase()) {
-      const exists = usersList.some(u => u.username.toLowerCase() === newUsername.toLowerCase());
-      if (exists) {
-        showFieldError('errProfileUsername', currentLang === 'ar' ? 'اسم المستخدم هذا مستخدم مسبقاً' : 'Username is already taken');
+    // If HTTP / PHP backend available, submit directly to API
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      try {
+        const res = await TrackerAPI.changePassword(currentPass, newPass, newUsername, newFullName, currentUser.username);
+        if (!res.success) {
+          if (res.message && (res.message.includes('password') || res.message.includes('Password') || res.message.includes('مرور'))) {
+            showFieldError('errCurrentPassword', res.message);
+          } else {
+            showFieldError('errProfileUsername', res.message || 'Update failed');
+          }
+          return;
+        }
+
+        // Successfully updated on MySQL backend
+        const oldUname = currentUser.username;
+        currentUser.username = newUsername;
+        currentUser.fullName = newFullName;
+        saveSession();
+        updateUserUI();
+
+        // Update local usersList cache
+        const userIdx = usersList.findIndex(u => u.username === oldUname || u.username === newUsername);
+        if (userIdx !== -1) {
+          usersList[userIdx].username = newUsername;
+          usersList[userIdx].fullName = newFullName;
+          usersList[userIdx].password = newPass;
+          saveUsers();
+        }
+
+        closeChangePasswordModal();
+        showToast(currentLang === 'ar' ? 'تم تحديث كلمة المرور وبيانات الدخول بنجاح! كلمة المرور القديمة أصبحت ملغاة.' : 'Password updated successfully! Old password is now disabled.', 'success');
         return;
+      } catch (err) {
+        console.warn('API password change fallback to local:', err);
       }
     }
 
-    // Update record
-    usersList[userIdx].username = newUsername;
-    usersList[userIdx].fullName = newFullName;
-    usersList[userIdx].password = newPass;
-    saveUsers();
+    // LocalStorage fallback for offline mode
+    const userIdx = usersList.findIndex(u => u.username === currentUser.username);
+    if (userIdx !== -1 && usersList[userIdx].password && usersList[userIdx].password !== currentPass) {
+      showFieldError('errCurrentPassword', currentLang === 'ar' ? 'كلمة المرور الحالية غير صحيحة' : 'Current password incorrect');
+      return;
+    }
 
-    // Update active session
+    if (userIdx !== -1) {
+      usersList[userIdx].username = newUsername;
+      usersList[userIdx].fullName = newFullName;
+      usersList[userIdx].password = newPass;
+      saveUsers();
+    }
+
     currentUser.username = newUsername;
     currentUser.fullName = newFullName;
     saveSession();
@@ -1258,6 +1425,9 @@
       if (btnDel) {
         btnDel.addEventListener('click', () => {
           if (confirm(`${currentLang === 'ar' ? 'هل أنت متأكد من حذف المستخدم' : 'Are you sure you want to delete user'} ${u.username}?`)) {
+            if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+              TrackerAPI.deleteUser(u.id).catch(e => console.warn('API deleteUser err:', e));
+            }
             usersList = usersList.filter(item => item.id !== u.id);
             saveUsers();
             renderUsersTable();
@@ -1270,23 +1440,17 @@
     });
   }
 
-  function handleAddUserSubmit(e) {
+  async function handleAddUserSubmit(e) {
     e.preventDefault();
     clearErrors();
 
     const username = el.newUsername.value.trim();
     const fullName = el.newUserFullName.value.trim();
     const password = el.newUserPassword.value;
-    const role = el.newUserRole.value;
+    const role = el.newUserRole.value || 'user';
 
     if (!username) {
       showFieldError('errNewUsername', currentLang === 'ar' ? 'اسم المستخدم مطلوب' : 'Username is required');
-      return;
-    }
-
-    const exists = usersList.some(u => u.username.toLowerCase() === username.toLowerCase());
-    if (exists) {
-      showFieldError('errNewUsername', currentLang === 'ar' ? 'اسم المستخدم مسجل مسبقاً' : 'Username already exists');
       return;
     }
 
@@ -1297,6 +1461,53 @@
 
     if (password.length < 6) {
       showFieldError('errNewUserPassword', currentLang === 'ar' ? 'كلمة المرور يجب أن لا تقل عن 6 خانات' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    // Call API to create user in MySQL
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      try {
+        const res = await TrackerAPI.createUser({
+          username,
+          password,
+          fullName,
+          role
+        });
+
+        if (!res.success) {
+          showFieldError('errNewUsername', res.message || 'Failed to create user in database');
+          return;
+        }
+
+        const newUser = {
+          id: res.data ? res.data.id : `u_${Date.now()}`,
+          username: res.data ? res.data.username : username,
+          fullName: res.data ? res.data.fullName : fullName,
+          password: password,
+          role: res.data ? res.data.role : role,
+          createdAt: new Date().toISOString().split('T')[0]
+        };
+
+        usersList.push(newUser);
+        saveUsers();
+        renderUsersTable();
+
+        el.newUsername.value = '';
+        el.newUserFullName.value = '';
+        el.newUserPassword.value = '';
+        el.addUserCard.style.display = 'none';
+
+        showToast(currentLang === 'ar' ? `تم إنشاء المستخدم "${username}" بنجاح! يمكنه تسجيل الدخول الآن.` : `User "${username}" created successfully! They can log in now.`, 'success');
+        return;
+      } catch (err) {
+        console.warn('API createUser fallback to local:', err);
+      }
+    }
+
+    // LocalStorage fallback for offline mode
+    const exists = usersList.some(u => u.username.toLowerCase() === username.toLowerCase());
+    if (exists) {
+      showFieldError('errNewUsername', currentLang === 'ar' ? 'اسم المستخدم مسجل مسبقاً' : 'Username already exists');
       return;
     }
 
@@ -1759,6 +1970,34 @@
     saveProjects();
     closeProjectModal();
     render();
+
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      const apiData = {
+        project_code: code,
+        project_name: name,
+        client_department: department,
+        project_manager: manager,
+        status: status,
+        progress: progress,
+        due_date: dueDate,
+        latest_updates: updates
+      };
+      if (editId) {
+        const existing = projects.find(p => p.id === editId);
+        if (existing && existing.dbId) apiData.id = existing.dbId;
+        TrackerAPI.updateProject(apiData).catch(e => console.warn('API update err:', e));
+      } else {
+        TrackerAPI.createProject(apiData).then(res => {
+          if (res && res.data && res.data.id) {
+            const found = projects.find(p => p.code === code);
+            if (found) {
+              found.dbId = res.data.id;
+              saveProjects();
+            }
+          }
+        }).catch(e => console.warn('API create err:', e));
+      }
+    }
   }
 
   function showFieldError(elementId, message) {
@@ -1816,6 +2055,14 @@
       saveProjects();
       render();
       showToast(i18n[currentLang].toastUpdateSaved, 'success');
+
+      if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+        TrackerAPI.quickUpdate(project.dbId || project.id, {
+          latest_updates: text,
+          status: project.status,
+          progress: project.progress
+        }).catch(e => console.warn('API quickUpdate err:', e));
+      }
     }
     closeInlineModal();
   }
@@ -1842,6 +2089,10 @@
     if (!deleteTargetId) return;
     const target = projects.find(p => p.id === deleteTargetId);
     const code = target ? target.code : 'Project';
+
+    if (target && typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      TrackerAPI.deleteProject(target.dbId || target.id).catch(e => console.warn('API delete err:', e));
+    }
 
     projects = projects.filter(p => p.id !== deleteTargetId);
     saveProjects();

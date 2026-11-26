@@ -20,6 +20,10 @@
           <span class="live-dot"></span> <span data-i18n="liveStatus">Live Status</span>
         </span>
         <span class="login-system-title" data-i18n="appSubtitle">Franchise Ready Saudi Arabia &bull; فرنشايز ريدي</span>
+        <a href="api/install.php" target="_blank" class="db-status-pill" id="dbStatusPill" style="display:inline-flex; align-items:center; gap:5px; font-size:0.75rem; background:rgba(255,255,255,0.15); padding:3px 10px; border-radius:12px; color:#fff; text-decoration:none; margin-left:10px;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10b981;"></span>
+          <span id="dbStatusText">MySQL / PHP Ready</span>
+        </a>
       </div>
 
       <!-- Bilingual Language Switcher -->
@@ -122,6 +126,7 @@
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="js/api.js"></script>
   <script src="js/login.js"></script>
 </body>
 </html>

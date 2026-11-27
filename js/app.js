@@ -145,6 +145,15 @@
       colUser: 'User',
       colRole: 'Role',
       colCreated: 'Created',
+      titleEditUser: 'Edit User & Password',
+      titleViewUser: 'User Profile Details',
+      hintLeaveBlankKeep: '(Leave blank to keep unchanged)',
+      lblEmail: 'Email Address',
+      lblStatus: 'Status',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      btnEdit: 'Edit This User',
+      toastUserUpdated: 'User and password updated successfully',
       btnClose: 'Close',
       toastSampleRestored: 'Franchise Ready sample projects restored',
       toastProjectSaved: 'Project saved successfully',
@@ -258,6 +267,15 @@
       colUser: 'المستخدم',
       colRole: 'الصلاحية',
       colCreated: 'تاريخ الإنشاء',
+      titleEditUser: 'تعديل بيانات المستخدم وكلمة المرور',
+      titleViewUser: 'تفاصيل ملف المستخدم',
+      hintLeaveBlankKeep: '(اتركه فارغاً للإبقاء على الحالية)',
+      lblEmail: 'البريد الإلكتروني',
+      lblStatus: 'الحالة',
+      statusActive: 'نشط',
+      statusInactive: 'غير نشط',
+      btnEdit: 'تعديل هذا المستخدم',
+      toastUserUpdated: 'تم تحديث بيانات المستخدم وكلمة المرور بنجاح',
       btnClose: 'إغلاق',
       toastSampleRestored: 'تمت استعادة مشاريع فرنشايز ريدي التجريبية',
       toastProjectSaved: 'تم حفظ المشروع بنجاح',
@@ -369,6 +387,7 @@
   // Application State
   let currentLang = 'en';
   let currentUser = null; // { id, username, fullName, role }
+  let currentViewedUser = null;
   let usersList = [];
   let departmentsList = [];
   let projects = [];
@@ -500,6 +519,34 @@
     newUserRole: document.getElementById('newUserRole'),
     btnCancelAddUser: document.getElementById('btnCancelAddUser'),
     usersTableBody: document.getElementById('usersTableBody'),
+
+    // Edit User Modal
+    editUserModal: document.getElementById('editUserModal'),
+    editUserForm: document.getElementById('editUserForm'),
+    editUserId: document.getElementById('editUserId'),
+    editUserOriginalUsername: document.getElementById('editUserOriginalUsername'),
+    editUserUsername: document.getElementById('editUserUsername'),
+    editUserFullName: document.getElementById('editUserFullName'),
+    editUserEmail: document.getElementById('editUserEmail'),
+    editUserRole: document.getElementById('editUserRole'),
+    editUserStatus: document.getElementById('editUserStatus'),
+    editUserPassword: document.getElementById('editUserPassword'),
+    btnToggleEditUserPass: document.getElementById('btnToggleEditUserPass'),
+    btnCloseEditUserModal: document.getElementById('btnCloseEditUserModal'),
+    btnCancelEditUser: document.getElementById('btnCancelEditUser'),
+
+    // View User Modal
+    viewUserModal: document.getElementById('viewUserModal'),
+    viewUserAvatar: document.getElementById('viewUserAvatar'),
+    viewUserFullName: document.getElementById('viewUserFullName'),
+    viewUserUsername: document.getElementById('viewUserUsername'),
+    viewUserRoleBadge: document.getElementById('viewUserRoleBadge'),
+    viewUserEmail: document.getElementById('viewUserEmail'),
+    viewUserStatus: document.getElementById('viewUserStatus'),
+    viewUserCreated: document.getElementById('viewUserCreated'),
+    btnCloseViewUserModal: document.getElementById('btnCloseViewUserModal'),
+    btnCloseViewUserBottom: document.getElementById('btnCloseViewUserBottom'),
+    btnEditFromView: document.getElementById('btnEditFromView'),
 
     // Toasts
     toastContainer: document.getElementById('toastContainer')
@@ -993,6 +1040,27 @@
     }
     if (el.addUserForm) el.addUserForm.addEventListener('submit', handleAddUserSubmit);
 
+    // Edit User Modal Events
+    if (el.btnCloseEditUserModal) el.btnCloseEditUserModal.addEventListener('click', closeEditUserModal);
+    if (el.btnCancelEditUser) el.btnCancelEditUser.addEventListener('click', closeEditUserModal);
+    if (el.editUserForm) el.editUserForm.addEventListener('submit', handleEditUserSubmit);
+    if (el.btnToggleEditUserPass && el.editUserPassword) {
+      el.btnToggleEditUserPass.addEventListener('click', () => {
+        const isPassword = el.editUserPassword.type === 'password';
+        el.editUserPassword.type = isPassword ? 'text' : 'password';
+        el.btnToggleEditUserPass.textContent = isPassword ? '🙈' : '👁';
+      });
+    }
+
+    // View User Modal Events
+    if (el.btnCloseViewUserModal) el.btnCloseViewUserModal.addEventListener('click', closeViewUserModal);
+    if (el.btnCloseViewUserBottom) el.btnCloseViewUserBottom.addEventListener('click', closeViewUserModal);
+    if (el.btnEditFromView) {
+      el.btnEditFromView.addEventListener('click', () => {
+        if (currentViewedUser) openEditUserModal(currentViewedUser);
+      });
+    }
+
     // Department Quick Add Events
     if (el.btnToggleAddDept) {
       el.btnToggleAddDept.addEventListener('click', () => {
@@ -1396,13 +1464,13 @@
 
     usersList.forEach(u => {
       const tr = document.createElement('tr');
-      const isSelf = currentUser && u.username === currentUser.username;
+      const isSelf = currentUser && (u.username.toLowerCase() === currentUser.username.toLowerCase());
       const roleBadgeClass = u.role === 'admin' ? 'role-admin' : 'role-user';
       const roleLabel = u.role === 'admin' ? (currentLang === 'ar' ? 'مسؤول' : 'Admin') : (currentLang === 'ar' ? 'مستخدم' : 'User');
 
       tr.innerHTML = `
         <td>
-          <strong>${escapeHTML(u.fullName)}</strong><br>
+          <strong>${escapeHTML(u.fullName || u.username)}</strong><br>
           <small class="text-muted">@${escapeHTML(u.username)}</small>
         </td>
         <td>
@@ -1410,25 +1478,53 @@
         </td>
         <td class="text-muted text-sm">${escapeHTML(u.createdAt || '2026-11-20')}</td>
         <td class="text-center">
-          ${isSelf ? `<small class="text-muted">(${currentLang === 'ar' ? 'حسابك الحالي' : 'Active Account'})</small>` : `
-            <button type="button" class="btn-action-icon btn-action-delete" data-del-user="${u.id}" title="Delete User">
+          <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+            <!-- View User Button -->
+            <button type="button" class="btn-action-icon btn-action-view" data-view-user="${escapeHTML(u.username)}" title="${currentLang === 'ar' ? 'عرض تفاصيل المستخدم' : 'View User Details'}">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
               </svg>
             </button>
-          `}
+            <!-- Edit User & Password Button -->
+            <button type="button" class="btn-action-icon btn-action-edit" data-edit-user="${escapeHTML(u.username)}" title="${currentLang === 'ar' ? 'تعديل المستخدم وكلمة المرور' : 'Edit User & Password'}">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <!-- Delete User Button -->
+            ${(isSelf || u.username.toLowerCase() === 'ibraheem01') ? '' : `
+              <button type="button" class="btn-action-icon btn-action-delete" data-del-user="${escapeHTML(u.username)}" title="${currentLang === 'ar' ? 'حذف المستخدم' : 'Delete User'}">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            `}
+          </div>
         </td>
       `;
+
+      // Event handlers: View, Edit, Delete
+      const btnView = tr.querySelector('[data-view-user]');
+      if (btnView) {
+        btnView.addEventListener('click', () => openViewUserModal(u));
+      }
+
+      const btnEdit = tr.querySelector('[data-edit-user]');
+      if (btnEdit) {
+        btnEdit.addEventListener('click', () => openEditUserModal(u));
+      }
 
       const btnDel = tr.querySelector('[data-del-user]');
       if (btnDel) {
         btnDel.addEventListener('click', () => {
-          if (confirm(`${currentLang === 'ar' ? 'هل أنت متأكد من حذف المستخدم' : 'Are you sure you want to delete user'} ${u.username}?`)) {
+          if (confirm(`${currentLang === 'ar' ? 'هل أنت متأكد من حذف المستخدم' : 'Are you sure you want to delete user'} "${u.username}"?`)) {
             if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
-              TrackerAPI.deleteUser(u.id).catch(e => console.warn('API deleteUser err:', e));
+              TrackerAPI.deleteUser({ id: u.id, username: u.username }).catch(e => console.warn('API deleteUser err:', e));
             }
-            usersList = usersList.filter(item => item.id !== u.id);
+            usersList = usersList.filter(item => item.username.toLowerCase() !== u.username.toLowerCase());
             saveUsers();
             renderUsersTable();
             showToast(i18n[currentLang].toastUserDeleted, 'info');
@@ -1438,6 +1534,165 @@
 
       el.usersTableBody.appendChild(tr);
     });
+  }
+
+  function openViewUserModal(user) {
+    if (!user) return;
+    currentViewedUser = user;
+
+    const initial = (user.fullName || user.username || 'U').charAt(0).toUpperCase();
+    if (el.viewUserAvatar) el.viewUserAvatar.textContent = initial;
+    if (el.viewUserFullName) el.viewUserFullName.textContent = user.fullName || user.username;
+    if (el.viewUserUsername) el.viewUserUsername.textContent = `@${user.username}`;
+    if (el.viewUserEmail) el.viewUserEmail.textContent = user.email || `${user.username}@franchiseready.sa`;
+
+    const isAdmin = user.role === 'admin';
+    if (el.viewUserRoleBadge) {
+      el.viewUserRoleBadge.className = `role-badge ${isAdmin ? 'role-admin' : 'role-user'}`;
+      el.viewUserRoleBadge.textContent = isAdmin
+        ? (currentLang === 'ar' ? 'مسؤول (تحكم كامل)' : 'Admin (Full Control)')
+        : (currentLang === 'ar' ? 'مستخدم عادي' : 'Standard User');
+    }
+
+    if (el.viewUserStatus) {
+      el.viewUserStatus.textContent = user.status === 'inactive' ? (currentLang === 'ar' ? 'غير نشط' : 'Inactive') : (currentLang === 'ar' ? 'نشط' : 'Active');
+      el.viewUserStatus.style.color = user.status === 'inactive' ? '#ef4444' : '#10b981';
+    }
+
+    if (el.viewUserCreated) {
+      el.viewUserCreated.textContent = user.createdAt || '2026-11-20';
+    }
+
+    if (el.viewUserModal) el.viewUserModal.classList.add('show');
+  }
+
+  function closeViewUserModal() {
+    if (el.viewUserModal) el.viewUserModal.classList.remove('show');
+  }
+
+  function openEditUserModal(user) {
+    if (!user) return;
+    closeViewUserModal();
+    clearErrors();
+
+    if (el.editUserId) el.editUserId.value = user.id || '';
+    if (el.editUserOriginalUsername) el.editUserOriginalUsername.value = user.username;
+    if (el.editUserUsername) el.editUserUsername.value = user.username;
+    if (el.editUserFullName) el.editUserFullName.value = user.fullName || '';
+    if (el.editUserEmail) el.editUserEmail.value = user.email || '';
+    if (el.editUserRole) el.editUserRole.value = user.role || 'user';
+    if (el.editUserStatus) el.editUserStatus.value = user.status || 'active';
+    if (el.editUserPassword) el.editUserPassword.value = '';
+
+    if (el.editUserModal) el.editUserModal.classList.add('show');
+    if (el.editUserFullName) el.editUserFullName.focus();
+  }
+
+  function closeEditUserModal() {
+    if (el.editUserModal) el.editUserModal.classList.remove('show');
+  }
+
+  async function handleEditUserSubmit(e) {
+    e.preventDefault();
+    clearErrors();
+
+    const id = el.editUserId.value;
+    const originalUsername = el.editUserOriginalUsername.value;
+    const username = el.editUserUsername.value.trim();
+    const fullName = el.editUserFullName.value.trim();
+    const email = el.editUserEmail.value.trim();
+    const role = el.editUserRole.value;
+    const status = el.editUserStatus.value;
+    const password = el.editUserPassword.value;
+
+    if (!username) {
+      showFieldError('errEditUserUsername', currentLang === 'ar' ? 'اسم المستخدم مطلوب' : 'Username is required');
+      return;
+    }
+
+    if (!fullName) {
+      showFieldError('errEditUserFullName', currentLang === 'ar' ? 'الاسم الكامل مطلوب' : 'Full name is required');
+      return;
+    }
+
+    if (password && password.length < 6) {
+      showFieldError('errEditUserPassword', currentLang === 'ar' ? 'كلمة المرور يجب أن لا تقل عن 6 خانات' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    // Call API if server available
+    if (typeof TrackerAPI !== 'undefined' && TrackerAPI.isHttpServer) {
+      try {
+        const payload = {
+          id,
+          originalUsername,
+          username,
+          fullName,
+          email,
+          role,
+          status
+        };
+        if (password) payload.password = password;
+
+        const res = await TrackerAPI.updateUser(payload);
+        if (!res.success) {
+          showFieldError('errEditUserUsername', res.message || 'Update failed');
+          return;
+        }
+
+        // Update local usersList cache
+        const idx = usersList.findIndex(u => u.username.toLowerCase() === originalUsername.toLowerCase());
+        if (idx !== -1) {
+          usersList[idx].username = username;
+          usersList[idx].fullName = fullName;
+          usersList[idx].email = email;
+          usersList[idx].role = role;
+          usersList[idx].status = status;
+          if (password) usersList[idx].password = password;
+          saveUsers();
+        }
+
+        // If active user edited their own profile, sync session
+        if (currentUser && currentUser.username.toLowerCase() === originalUsername.toLowerCase()) {
+          currentUser.username = username;
+          currentUser.fullName = fullName;
+          currentUser.role = role;
+          saveSession();
+          updateUserUI();
+        }
+
+        renderUsersTable();
+        closeEditUserModal();
+        showToast(currentLang === 'ar' ? `تم تحديث بيانات المستخدم "${username}" وكلمة المرور بنجاح!` : `User "${username}" and password updated successfully!`, 'success');
+        return;
+      } catch (err) {
+        console.warn('API updateUser fallback:', err);
+      }
+    }
+
+    // Local fallback
+    const idx = usersList.findIndex(u => u.username.toLowerCase() === originalUsername.toLowerCase());
+    if (idx !== -1) {
+      usersList[idx].username = username;
+      usersList[idx].fullName = fullName;
+      usersList[idx].email = email;
+      usersList[idx].role = role;
+      usersList[idx].status = status;
+      if (password) usersList[idx].password = password;
+      saveUsers();
+    }
+
+    if (currentUser && currentUser.username.toLowerCase() === originalUsername.toLowerCase()) {
+      currentUser.username = username;
+      currentUser.fullName = fullName;
+      currentUser.role = role;
+      saveSession();
+      updateUserUI();
+    }
+
+    renderUsersTable();
+    closeEditUserModal();
+    showToast(i18n[currentLang].toastUserUpdated, 'success');
   }
 
   async function handleAddUserSubmit(e) {

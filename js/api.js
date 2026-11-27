@@ -180,10 +180,11 @@ const TrackerAPI = (function () {
       });
     },
 
-    async deleteUser(id) {
+    async deleteUser(idOrPayload) {
+      const body = typeof idOrPayload === 'object' ? idOrPayload : { id: idOrPayload };
       return request('users.php?action=delete', {
         method: 'POST',
-        body: { id }
+        body
       });
     }
   };

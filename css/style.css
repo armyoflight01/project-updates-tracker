@@ -1018,6 +1018,14 @@ html[dir="rtl"] .status-pill.completed::before {
   transition: var(--transition);
 }
 
+.btn-action-view {
+  color: #0284c7;
+}
+.btn-action-view:hover {
+  background-color: #f0f9ff;
+  border-color: #bae6fd;
+}
+
 .btn-action-edit {
   color: var(--brand-blue);
 }

@@ -90,36 +90,46 @@ try {
     }
 
     // ----------------------------------------------------
-    // POST / Action: update - Edit User (Admin only)
+    // POST / Action: update - Edit User & Password (Admin only)
     // ----------------------------------------------------
     if ($method === 'POST' && $action === 'update') {
         $admin = requireAdmin();
         $body = getRequestBody();
 
-        $id       = (int)($body['id'] ?? 0);
-        $username = trim($body['username'] ?? '');
-        $fullName = trim($body['fullName'] ?? $body['full_name'] ?? '');
-        $email    = trim($body['email'] ?? '');
-        $role     = trim($body['role'] ?? 'user');
-        $status   = trim($body['status'] ?? 'active');
-        $password = $body['password'] ?? '';
+        $id               = (int)($body['id'] ?? 0);
+        $originalUsername = trim($body['originalUsername'] ?? '');
+        $username         = trim($body['username'] ?? '');
+        $fullName         = trim($body['fullName'] ?? $body['full_name'] ?? '');
+        $email            = trim($body['email'] ?? '');
+        $role             = trim($body['role'] ?? 'user');
+        $status           = trim($body['status'] ?? 'active');
+        $password         = $body['password'] ?? '';
 
-        if ($id <= 0 || empty($username) || empty($fullName)) {
-            jsonResponse(false, 'Invalid user ID, username, or full name.', null, 400);
+        if (empty($username) || empty($fullName)) {
+            jsonResponse(false, 'Username and full name are required.', null, 400);
         }
 
-        // Verify target exists
-        $currStmt = $pdo->prepare("SELECT * FROM `users` WHERE `id` = ?");
-        $currStmt->execute([$id]);
-        $target = $currStmt->fetch();
+        // Verify target exists by ID or original username
+        $target = null;
+        if ($id > 0) {
+            $currStmt = $pdo->prepare("SELECT * FROM `users` WHERE `id` = ?");
+            $currStmt->execute([$id]);
+            $target = $currStmt->fetch();
+        }
+        if (!$target && !empty($originalUsername)) {
+            $currStmt = $pdo->prepare("SELECT * FROM `users` WHERE LOWER(`username`) = LOWER(?)");
+            $currStmt->execute([$originalUsername]);
+            $target = $currStmt->fetch();
+            if ($target) $id = (int)$target['id'];
+        }
 
         if (!$target) {
-            jsonResponse(false, 'User not found.', null, 404);
+            jsonResponse(false, 'User not found in system database.', null, 404);
         }
 
         // Check unique username against other accounts
         $check = $pdo->prepare("SELECT `id` FROM `users` WHERE LOWER(`username`) = LOWER(?) AND `id` != ?");
-        $check->execute([$username, $id]);
+        $check->execute([$username, $target['id']]);
         if ($check->fetch()) {
             jsonResponse(false, "Username '{$username}' is already in use by another account.", null, 409);
         }
@@ -138,19 +148,26 @@ try {
                 SET `username` = ?, `full_name` = ?, `email` = ?, `role` = ?, `status` = ?, `password` = ? 
                 WHERE `id` = ?
             ");
-            $stmt->execute([$username, $fullName, !empty($email) ? $email : null, $role, $status, $hash, $id]);
+            $stmt->execute([$username, $fullName, !empty($email) ? $email : null, $role, $status, $hash, $target['id']]);
         } else {
             $stmt = $pdo->prepare("
                 UPDATE `users` 
                 SET `username` = ?, `full_name` = ?, `email` = ?, `role` = ?, `status` = ? 
                 WHERE `id` = ?
             ");
-            $stmt->execute([$username, $fullName, !empty($email) ? $email : null, $role, $status, $id]);
+            $stmt->execute([$username, $fullName, !empty($email) ? $email : null, $role, $status, $target['id']]);
         }
 
-        logAudit('USER_UPDATED', "Admin {$admin['username']} updated user ID #{$id} ({$username})", $admin['id'], $admin['username']);
+        logAudit('USER_UPDATED', "Admin {$admin['username']} updated user ID #{$target['id']} ({$username})", $admin['id'], $admin['username']);
 
-        jsonResponse(true, "User '{$username}' updated successfully!");
+        jsonResponse(true, "User '{$username}' updated successfully!", [
+            'id'       => (int)$target['id'],
+            'username' => $username,
+            'fullName' => $fullName,
+            'email'    => $email,
+            'role'     => $role,
+            'status'   => $status
+        ]);
     }
 
     // ----------------------------------------------------
@@ -160,32 +177,37 @@ try {
         $admin = requireAdmin();
         $body = getRequestBody();
         $id = (int)($body['id'] ?? 0);
+        $username = trim($body['username'] ?? '');
 
-        if ($id <= 0) {
-            jsonResponse(false, 'Missing user ID.', null, 400);
+        // Fetch target
+        $target = null;
+        if ($id > 0) {
+            $stmt = $pdo->prepare("SELECT `id`, `username`, `role` FROM `users` WHERE `id` = ?");
+            $stmt->execute([$id]);
+            $target = $stmt->fetch();
+        }
+        if (!$target && !empty($username)) {
+            $stmt = $pdo->prepare("SELECT `id`, `username`, `role` FROM `users` WHERE LOWER(`username`) = LOWER(?)");
+            $stmt->execute([$username]);
+            $target = $stmt->fetch();
+        }
+
+        if (!$target) {
+            jsonResponse(false, 'User not found in system database.', null, 404);
         }
 
         // Prevent admin from deleting themselves
-        if ($id === (int)$admin['id']) {
+        if ((int)$target['id'] === (int)$admin['id'] || strtolower($target['username']) === strtolower($admin['username'])) {
             jsonResponse(false, 'You cannot delete your own active administrator account.', null, 400);
         }
 
-        // Fetch target
-        $stmt = $pdo->prepare("SELECT `username`, `role` FROM `users` WHERE `id` = ?");
-        $stmt->execute([$id]);
-        $target = $stmt->fetch();
-
-        if (!$target) {
-            jsonResponse(false, 'User not found.', null, 404);
-        }
-
         // Protect primary root admin
-        if ($target['username'] === 'ibraheem01') {
+        if (strtolower($target['username']) === 'ibraheem01') {
             jsonResponse(false, 'The root administrator account (ibraheem01) cannot be deleted.', null, 403);
         }
 
         $del = $pdo->prepare("DELETE FROM `users` WHERE `id` = ?");
-        $del->execute([$id]);
+        $del->execute([$target['id']]);
 
         logAudit('USER_DELETED', "Admin {$admin['username']} deleted user '{$target['username']}'", $admin['id'], $admin['username']);
 
